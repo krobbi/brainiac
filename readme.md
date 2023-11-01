@@ -4,7 +4,9 @@ __Copyright &copy; 2023 Chris Roberts__ (Krobbizoid).
 
 # Contents
 1. [About](#about)
-2. [License](#license)
+2. [Usage](#usage)
+3. [Building](#building)
+4. [License](#license)
 
 # About
 Brainiac is a [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) interpreter
@@ -18,6 +20,32 @@ try out a computed goto dispatch table with.
 Brainfuck implementations have already been created many times before. Many of
 which are probably faster than Brainiac due to some clever
 [optimizations](https://www.nayuki.io/page/optimizing-brainfuck-compiler).
+
+# Usage
+Run Brainiac from the command line with any arguments to get a hello world
+message:
+```bash
+brainiac
+```
+> Hello, Brainiac!
+
+# Building
+Brainiac is built using [GCC](https://gnu.org/software/gcc) and
+[Make](https://gnu.org/software/make):
+```bash
+make
+```
+
+The source file `src.c` will produce the
+binary file `brainiac`, or `brainiac.exe` on Windows.
+
+Make can also be used to remove the binary file:
+```bash
+make clean
+```
+
+This subcommand requires `rm` from
+[Coreutils](https://gnu.org/software/coreutils).
 
 # License
 Brainiac is released under the MIT License:  
