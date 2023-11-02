@@ -134,37 +134,32 @@ void interpret(uint8_t *ip) {
 	
 	VM_LOOP {
 		VM_OP(OP_HALT) {
-			printf("Halt.\n");
 			free(cells);
 			return;
 		}
 		
 		VM_OP(OP_RIGHT) {
-			printf("Right.\n");
 			++dp;
 			VM_DISPATCH;
 		}
 		
 		VM_OP(OP_LEFT) {
-			printf("Left.\n");
 			--dp;
 			VM_DISPATCH;
 		}
 		
 		VM_OP(OP_INCREMENT) {
-			printf("Increment.\n");
 			++cells[dp];
 			VM_DISPATCH;
 		}
 		
 		VM_OP(OP_DECREMENT) {
-			printf("Decrement.\n");
 			--cells[dp];
 			VM_DISPATCH;
 		}
 		
 		VM_OP(OP_OUTPUT) {
-			printf("Output (TODO.)\n");
+			putchar(cells[dp]);
 			VM_DISPATCH;
 		}
 		
