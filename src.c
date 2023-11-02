@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Computed goto requires a GCC extension.
+#ifdef __GNUC__
+	#define USE_COMPUTED_GOTO
+#endif
+
 // A bytecode opcode.
 enum {
 	OP_HALT, // Halt execution. Equivalent to end of file.
@@ -34,8 +39,27 @@ void interpret(uint8_t *ip) {
 	uint16_t dp = 0;
 	
 	#ifdef USE_COMPUTED_GOTO
-		error("Computed goto is not yet implemented.");
+		printf("Using computed goto dispatch.\n");
+		
+		// Table of addresses to jump to for each opcode.
+		static void *dispatchTable[] = {
+			[OP_HALT] = &&vm_OP_HALT,
+			[OP_RIGHT] = &&vm_OP_RIGHT,
+			[OP_LEFT] = &&vm_OP_LEFT,
+			[OP_INCREMENT] = &&vm_OP_INCREMENT,
+			[OP_DECREMENT] = &&vm_OP_DECREMENT,
+			[OP_OUTPUT] = &&vm_OP_OUTPUT,
+			[OP_INPUT] = &&vm_OP_INPUT,
+			[OP_BEGIN] = &&vm_OP_BEGIN,
+			[OP_END] = &&vm_OP_END,
+		};
+		
+		#define VM_OP(opcode) vm_##opcode:
+		#define VM_DISPATCH goto *dispatchTable[*ip++]
+		#define VM_LOOP VM_DISPATCH;
 	#else
+		printf("Using switch case dispatch.\n");
+		
 		#define VM_LOOP for(;;) switch(*ip++)
 		#define VM_OP(opcode) case opcode:
 		#define VM_DISPATCH break
@@ -127,5 +151,4 @@ int main() {
 	uint8_t *bytecode = createTestBytecode();
 	interpret(bytecode);
 	free(bytecode);
-	printf("Hello, Brainiac!\n");
 }
