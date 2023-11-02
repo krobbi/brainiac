@@ -22,12 +22,11 @@ which are probably faster than Brainiac due to some clever
 [optimizations](https://www.nayuki.io/page/optimizing-brainfuck-compiler).
 
 # Usage
-Run Brainiac from the command line with any arguments to get a hello world
-message:
+Run Brainiac from the command line with any arguments to test it:
 ```bash
 brainiac
 ```
-> Hello, Brainiac!
+> (Development test output...)
 
 # Building
 Brainiac is built using [GCC](https://gnu.org/software/gcc) and
