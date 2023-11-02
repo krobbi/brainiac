@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,8 +34,12 @@ typedef struct {
 } Compiler;
 
 // Exit with an error message.
-void error(const char *message) {
-	fprintf(stderr, "%s\n", message);
+void error(const char *format, ...) {
+	va_list args;
+	va_start(args, format);
+	vfprintf(stderr, format, args);
+	va_end(args);
+	fputc('\n', stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -93,15 +98,21 @@ void compileTestChar(Compiler *compiler, char character) {
 
 // Compile bytecode from a path.
 uint8_t *compile(const char *path) {
-	printf("Compiling '%s'...\n", path);
+	// The file to compile.
+	FILE *file = fopen(path, "rb");
+	
+	if (file == NULL) {
+		error("Could not read '%s'.", path);
+	}
 	
 	// The compiler to emit bytecode with.
 	Compiler compiler;
 	compilerInit(&compiler);
-	compileTestChar(&compiler, 'b');
-	compileTestChar(&compiler, 'f');
-	compileTestChar(&compiler, '!');
-	compileTestChar(&compiler, '\n');
+	
+	if (fclose(file) == EOF) {
+		error("Could not close '%s'.", path);
+	}
+	
 	return compilerEnd(&compiler);
 }
 
