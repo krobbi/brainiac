@@ -31,6 +31,9 @@ typedef struct {
 	
 	// The compiler's bytecode.
 	uint8_t *bytecode;
+	
+	// The compiler's loop depth.
+	int depth;
 } Compiler;
 
 // Exit with an error message.
@@ -48,6 +51,7 @@ void compilerInit(Compiler *compiler) {
 	compiler->count = 0;
 	compiler->capacity = 8;
 	compiler->bytecode = (uint8_t*)malloc(compiler->capacity * sizeof(uint8_t));
+	compiler->depth = 0;
 	
 	if (compiler->bytecode == NULL) {
 		error("Could not allocate bytecode.");
@@ -83,13 +87,30 @@ void compilerParse(Compiler *compiler, char character) {
 		case '-': compilerEmit(compiler, OP_DECREMENT); break;
 		case '.': compilerEmit(compiler, OP_OUTPUT); break;
 		case ',': compilerEmit(compiler, OP_INPUT); break;
-		case '[': compilerEmit(compiler, OP_BEGIN); break;
-		case ']': compilerEmit(compiler, OP_END); break;
+		case '[': {
+			compilerEmit(compiler, OP_BEGIN);
+			compiler->depth++;
+			break;
+		}
+		case ']': {
+			if (compiler->depth > 0) {
+				compilerEmit(compiler, OP_END);
+				compiler->depth--;
+			} else {
+				error("Cannot use ']' without an opening '['.");
+			}
+			
+			break;
+		}
 	}
 }
 
 // End a compiler and pass ownership of its bytecode.
 uint8_t *compilerEnd(Compiler *compiler) {
+	if (compiler->depth > 0) {
+		error("Cannot use '[' without a closing ']'.");
+	}
+	
 	compilerEmit(compiler, OP_HALT);
 	
 	if (compiler->capacity > compiler->count) {
