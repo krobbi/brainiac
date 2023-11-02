@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "opcodes.h"
+#include "vm.h"
 
 // Computed goto requires a GCC extension.
 #ifdef __GNUC__
@@ -140,124 +141,15 @@ uint8_t *compile(const char *path) {
 	return compilerEnd(&compiler);
 }
 
-// Interpret bytecode from an instruction pointer.
-void interpret(uint8_t *ip) {
-	// Array of memory cells. Contains 2^16 cells to take advantage of wrapping.
-	uint8_t *cells = (uint8_t *)calloc(UINT16_MAX + 1, sizeof(uint8_t));
-	
-	if (cells == NULL) {
-		error("Could not allocate memory cells.");
-	}
-	
-	// Data pointer. The index of the current memory cell.
-	uint16_t dp = 0;
-	
-	#ifdef USE_COMPUTED_GOTO
-		// Table of addresses to jump to for each opcode.
-		static void *dispatchTable[] = {
-			[OP_HALT] = &&vm_OP_HALT,
-			[OP_RIGHT] = &&vm_OP_RIGHT,
-			[OP_LEFT] = &&vm_OP_LEFT,
-			[OP_INCREMENT] = &&vm_OP_INCREMENT,
-			[OP_DECREMENT] = &&vm_OP_DECREMENT,
-			[OP_OUTPUT] = &&vm_OP_OUTPUT,
-			[OP_INPUT] = &&vm_OP_INPUT,
-			[OP_BEGIN] = &&vm_OP_BEGIN,
-			[OP_END] = &&vm_OP_END,
-		};
-		
-		#define VM_OP(opcode) vm_##opcode:
-		#define VM_DISPATCH goto *dispatchTable[*ip++]
-		#define VM_LOOP VM_DISPATCH;
-	#else
-		#define VM_LOOP for(;;) switch(*ip++)
-		#define VM_OP(opcode) case opcode:
-		#define VM_DISPATCH break
-	#endif
-	
-	VM_LOOP {
-		VM_OP(OP_HALT) {
-			free(cells);
-			return;
-		}
-		
-		VM_OP(OP_RIGHT) {
-			++dp;
-			VM_DISPATCH;
-		}
-		
-		VM_OP(OP_LEFT) {
-			--dp;
-			VM_DISPATCH;
-		}
-		
-		VM_OP(OP_INCREMENT) {
-			++cells[dp];
-			VM_DISPATCH;
-		}
-		
-		VM_OP(OP_DECREMENT) {
-			--cells[dp];
-			VM_DISPATCH;
-		}
-		
-		VM_OP(OP_OUTPUT) {
-			putchar(cells[dp]);
-			VM_DISPATCH;
-		}
-		
-		VM_OP(OP_INPUT) {
-			int character = getchar();
-			cells[dp] = character != EOF ? (uint8_t)character : 0;
-			VM_DISPATCH;
-		}
-		
-		// TODO: Optimize loops by including offset operands.
-		VM_OP(OP_BEGIN) {
-			if (!cells[dp]) {
-				int depth = 1;
-				
-				do {
-					switch (*ip++) {
-						case OP_BEGIN: ++depth; break;
-						case OP_END: --depth; break;
-					}
-				} while (depth);
-			}
-			
-			VM_DISPATCH;
-		}
-		
-		VM_OP(OP_END) {
-			if (cells[dp]) {
-				int depth = 1;
-				--ip;
-				
-				do {
-					switch (*--ip) {
-						case OP_BEGIN: --depth; break;
-						case OP_END: ++depth; break;
-					}
-				} while (depth);
-			}
-			
-			VM_DISPATCH;
-		}
-	}
-	
-	#undef VM_LOOP
-	#undef VM_OP
-	#undef VM_DISPATCH
-}
-
 // Test Brainiac.
 int main(int argc, const char *argv[]) {
-	if (argc != 2) {
-		error("Usage: brainiac <path>");
+	if (argc == 2) {
+		uint8_t *bytecode = compile(argv[1]);
+		int exitCode = interpret(bytecode);
+		free(bytecode);
+		return exitCode;
+	} else {
+		fprintf(stderr, "Usage: brainiac <path>\n");
+		return EXIT_FAILURE;
 	}
-	
-	// Compiled bytecode to execute with the interpreter.
-	uint8_t *bytecode = compile(argv[1]);
-	interpret(bytecode);
-	free(bytecode);
 }
