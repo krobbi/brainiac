@@ -20,35 +20,81 @@ enum {
 	OP_END, // Jump back if the pointed data is non-zero. Emitted from ']'.
 };
 
+// A compiler's state.
+typedef struct {
+	// The number of bytes in the compiler's bytecode.
+	int count;
+	
+	// The capacity of the compiler's bytecode.
+	int capacity;
+	
+	// The compiler's bytecode.
+	uint8_t *bytecode;
+} Compiler;
+
 // Exit with an error message.
 void error(const char *message) {
 	fprintf(stderr, "%s\n", message);
 	exit(EXIT_FAILURE);
 }
 
+// Initialize a compiler.
+void compilerInit(Compiler *compiler) {
+	compiler->count = 0;
+	compiler->capacity = 8;
+	compiler->bytecode = (uint8_t*)malloc(compiler->capacity * sizeof(uint8_t));
+	
+	if (compiler->bytecode == NULL) {
+		error("Could not allocate bytecode.");
+	}
+}
+
+// Resize a compiler's bytecode.
+void compilerResize(Compiler *compiler, int capacity) {
+	compiler->capacity = capacity;
+	compiler->bytecode = (uint8_t*)realloc(compiler->bytecode, capacity * sizeof(uint8_t));
+	
+	if (compiler->bytecode == NULL) {
+		error("Could not reallocate bytecode.");
+	}
+}
+
+// Emit a byte of bytecode to a compiler.
+void compilerEmit(Compiler *compiler, uint8_t byte) {
+	if (compiler->count == compiler->capacity) {
+		compilerResize(compiler, compiler->capacity * 2);
+	}
+	
+	compiler->bytecode[compiler->count++] = byte;
+}
+
+// End a compiler and pass ownership of its bytecode.
+uint8_t *compilerEnd(Compiler *compiler) {
+	compilerEmit(compiler, OP_HALT);
+	
+	if (compiler->capacity > compiler->count) {
+		compilerResize(compiler, compiler->count);
+	}
+	
+	return compiler->bytecode;
+}
+
 // Compile bytecode from a path.
 uint8_t *compile(const char *path) {
 	printf("Compiling from path: '%s'\n", path);
 	
-	// Test bytecode.
-	uint8_t *bytecode = (uint8_t*)malloc(9);
-	
-	if (bytecode == NULL) {
-		error("Could not allocate test bytecode.");
-	}
-	
-	// Shuffle operations to test dispatch.
-	bytecode[0] = OP_RIGHT;
-	bytecode[1] = OP_INCREMENT;
-	bytecode[2] = OP_LEFT;
-	bytecode[3] = OP_DECREMENT;
-	bytecode[4] = OP_OUTPUT;
-	bytecode[5] = OP_BEGIN;
-	bytecode[6] = OP_INPUT;
-	bytecode[7] = OP_END;
-	bytecode[8] = OP_HALT; // Bytecode must end with a halt operation.
-	
-	return bytecode;
+	// The compiler to emit bytecode with.
+	Compiler compiler;
+	compilerInit(&compiler);
+	compilerEmit(&compiler, OP_RIGHT);
+	compilerEmit(&compiler, OP_INCREMENT);
+	compilerEmit(&compiler, OP_LEFT);
+	compilerEmit(&compiler, OP_DECREMENT);
+	compilerEmit(&compiler, OP_OUTPUT);
+	compilerEmit(&compiler, OP_BEGIN);
+	compilerEmit(&compiler, OP_INPUT);
+	compilerEmit(&compiler, OP_END);
+	return compilerEnd(&compiler);
 }
 
 // Interpret bytecode from an instruction pointer.
@@ -149,7 +195,7 @@ int main(int argc, const char *argv[]) {
 		error("Usage: brainiac <path>");
 	}
 	
-	// Bytecode to test the interpreter with.
+	// Compiled bytecode to execute with the interpreter.
 	uint8_t *bytecode = compile(argv[1]);
 	interpret(bytecode);
 	free(bytecode);
