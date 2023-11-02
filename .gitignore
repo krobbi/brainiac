@@ -1,10 +1,5 @@
-# Output:
-*.exe
-*.ii
-*.o
-*.out
-*.s
-brainiac
+# Binaries:
+bin/*
 
 # IDE:
 .idea/*

@@ -34,16 +34,24 @@ Brainiac is built using [GCC](https://gnu.org/software/gcc) and
 make
 ```
 
-The source file `src.c` will produce the
-binary file `brainiac`, or `brainiac.exe` on Windows.
+The source files in `src/` will produce the binary file `bin/brainiac` or
+`bin/brainiac.exe` on Windows, along with intermediate object files. These
+object files are not necessary for the binary to run.
 
-Make can also be used to remove the binary file:
+Make can be used to remove the `bin/` directory:
 ```bash
 make clean
 ```
 
 This subcommand requires `rm` from
 [Coreutils](https://gnu.org/software/coreutils).
+
+Make can also be used to run `test/cat.bf` after building:
+```bash
+make test
+```
+
+Enter `Ctrl+D` to exit the test program or `Ctrl+Z` on Windows.
 
 # License
 Brainiac is released under the MIT License:  

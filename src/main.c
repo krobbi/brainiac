@@ -3,11 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Computed goto requires a GCC extension.
-#ifdef __GNUC__
-	#define USE_COMPUTED_GOTO
-#endif
-
 // A bytecode opcode.
 enum {
 	OP_HALT, // Halt execution. Equivalent to end of file.
@@ -20,6 +15,11 @@ enum {
 	OP_BEGIN, // Jump forward if the pointed data is zero. Emitted from '['.
 	OP_END, // Jump back if the pointed data is non-zero. Emitted from ']'.
 };
+
+// Computed goto requires a GCC extension.
+#ifdef __GNUC__
+	#define USE_COMPUTED_GOTO
+#endif
 
 // A compiler's state.
 typedef struct {
