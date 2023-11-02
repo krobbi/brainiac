@@ -54,7 +54,7 @@ uint8_t *compile(const char *path) {
 // Interpret bytecode from an instruction pointer.
 void interpret(uint8_t *ip) {
 	// Array of memory cells. Contains 2^16 cells to take advantage of wrapping.
-	uint8_t *cells = calloc(UINT16_MAX + 1, sizeof(uint8_t));
+	uint8_t *cells = (uint8_t *)calloc(UINT16_MAX + 1, sizeof(uint8_t));
 	
 	if (cells == NULL) {
 		error("Could not allocate memory cells.");
