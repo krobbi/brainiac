@@ -79,21 +79,29 @@ uint8_t *compilerEnd(Compiler *compiler) {
 	return compiler->bytecode;
 }
 
+// Compile a test character.
+void compileTestChar(Compiler *compiler, char character) {
+	int code = (int)(unsigned char)character;
+	
+	for (int i = 0; i < code; i++) {
+		compilerEmit(compiler, OP_INCREMENT);
+	}
+	
+	compilerEmit(compiler, OP_OUTPUT);
+	compilerEmit(compiler, OP_RIGHT);
+}
+
 // Compile bytecode from a path.
 uint8_t *compile(const char *path) {
-	printf("Compiling from path: '%s'\n", path);
+	printf("Compiling '%s'...\n", path);
 	
 	// The compiler to emit bytecode with.
 	Compiler compiler;
 	compilerInit(&compiler);
-	compilerEmit(&compiler, OP_RIGHT);
-	compilerEmit(&compiler, OP_INCREMENT);
-	compilerEmit(&compiler, OP_LEFT);
-	compilerEmit(&compiler, OP_DECREMENT);
-	compilerEmit(&compiler, OP_OUTPUT);
-	compilerEmit(&compiler, OP_BEGIN);
-	compilerEmit(&compiler, OP_INPUT);
-	compilerEmit(&compiler, OP_END);
+	compileTestChar(&compiler, 'b');
+	compileTestChar(&compiler, 'f');
+	compileTestChar(&compiler, '!');
+	compileTestChar(&compiler, '\n');
 	return compilerEnd(&compiler);
 }
 
