@@ -73,6 +73,21 @@ void compilerEmit(Compiler *compiler, uint8_t byte) {
 	compiler->bytecode[compiler->count++] = byte;
 }
 
+// Parse a character with a compiler.
+void compilerParse(Compiler *compiler, char character) {
+	// All non-command characters are comments.
+	switch (character) {
+		case '>': compilerEmit(compiler, OP_RIGHT); break;
+		case '<': compilerEmit(compiler, OP_LEFT); break;
+		case '+': compilerEmit(compiler, OP_INCREMENT); break;
+		case '-': compilerEmit(compiler, OP_DECREMENT); break;
+		case '.': compilerEmit(compiler, OP_OUTPUT); break;
+		case ',': compilerEmit(compiler, OP_INPUT); break;
+		case '[': compilerEmit(compiler, OP_BEGIN); break;
+		case ']': compilerEmit(compiler, OP_END); break;
+	}
+}
+
 // End a compiler and pass ownership of its bytecode.
 uint8_t *compilerEnd(Compiler *compiler) {
 	compilerEmit(compiler, OP_HALT);
@@ -101,7 +116,7 @@ uint8_t *compile(const char *path) {
 	int character;
 	
 	while ((character = fgetc(file)) != EOF) {
-		putchar(character);
+		compilerParse(&compiler, (char)character);
 	}
 	
 	if (ferror(file) || !feof(file)) {
