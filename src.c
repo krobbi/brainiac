@@ -197,7 +197,8 @@ void interpret(uint8_t *ip) {
 		}
 		
 		VM_OP(OP_INPUT) {
-			printf("Input (TODO.)\n");
+			int character = getchar();
+			cells[dp] = character != EOF ? (uint8_t)character : 0;
 			VM_DISPATCH;
 		}
 		

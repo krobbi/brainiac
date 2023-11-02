@@ -26,9 +26,11 @@ Run Brainiac from the command line with a path to a Brainfuck source file:
 ```bash
 brainiac test/test.bf
 ```
-> !
+> \> (input character)  
+> (input character)Begin (TODO.)  
+> End (TODO.)
 
-The compilation stage is not yet implemented.
+Loops are not yet implemented.
 
 # Building
 Brainiac is built using [GCC](https://gnu.org/software/gcc) and

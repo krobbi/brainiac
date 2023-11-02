@@ -1,17 +1,5 @@
-4    8    12   16
-++++ ++++ ++++ ++++
-20   24   28   32
-++++ ++++ ++++ ++++
-33
-+
-
-. Exclamation mark
-
-32
--
-28   24   20   16
----- ---- ---- ----
-12   10
----- --
-
-. Line feed
+, Get input character
+. Print input character
+[-] Clear cell > loops not yet implemented
+++++++++++ Set cell to 10 (line feed)
+. Print line feed
