@@ -223,13 +223,35 @@ void interpret(uint8_t *ip) {
 			VM_DISPATCH;
 		}
 		
+		// TODO: Optimize loops by including offset operands.
 		VM_OP(OP_BEGIN) {
-			printf("Begin (TODO.)\n");
+			if (!cells[dp]) {
+				int depth = 1;
+				
+				do {
+					switch (*ip++) {
+						case OP_BEGIN: ++depth; break;
+						case OP_END: --depth; break;
+					}
+				} while (depth);
+			}
+			
 			VM_DISPATCH;
 		}
 		
 		VM_OP(OP_END) {
-			printf("End (TODO.)\n");
+			if (cells[dp]) {
+				int depth = 1;
+				--ip;
+				
+				do {
+					switch (*--ip) {
+						case OP_BEGIN: --depth; break;
+						case OP_END: ++depth; break;
+					}
+				} while (depth);
+			}
+			
 			VM_DISPATCH;
 		}
 	}
