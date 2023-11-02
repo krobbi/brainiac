@@ -26,7 +26,7 @@ Run Brainiac from the command line with a path to a Brainfuck source file:
 ```bash
 brainiac test/test.bf
 ```
-> (no output)
+> (file contents)
 
 The compilation stage is not yet implemented.
 

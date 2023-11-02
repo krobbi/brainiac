@@ -84,33 +84,32 @@ uint8_t *compilerEnd(Compiler *compiler) {
 	return compiler->bytecode;
 }
 
-// Compile a test character.
-void compileTestChar(Compiler *compiler, char character) {
-	int code = (int)(unsigned char)character;
-	
-	for (int i = 0; i < code; i++) {
-		compilerEmit(compiler, OP_INCREMENT);
-	}
-	
-	compilerEmit(compiler, OP_OUTPUT);
-	compilerEmit(compiler, OP_RIGHT);
-}
-
 // Compile bytecode from a path.
 uint8_t *compile(const char *path) {
 	// The file to compile.
 	FILE *file = fopen(path, "rb");
 	
 	if (file == NULL) {
-		error("Could not read '%s'.", path);
+		error("Could not read '%s', file may not exist.", path);
 	}
 	
-	// The compiler to emit bytecode with.
+	// The compiler to compile the file with.
 	Compiler compiler;
 	compilerInit(&compiler);
 	
+	// The character to parse.
+	int character;
+	
+	while ((character = fgetc(file)) != EOF) {
+		putchar(character);
+	}
+	
+	if (ferror(file) || !feof(file)) {
+		error("Could not finish reading '%s'.", path);
+	}
+	
 	if (fclose(file) == EOF) {
-		error("Could not close '%s'.", path);
+		error("Could not close '%s' after reading.", path);
 	}
 	
 	return compilerEnd(&compiler);
