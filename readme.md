@@ -22,9 +22,9 @@ which are probably faster than Brainiac due to some clever
 [optimizations](https://www.nayuki.io/page/optimizing-brainfuck-compiler).
 
 # Usage
-Run Brainiac from the command line with any arguments to test it:
+Run Brainiac from the command line with a path to a Brainfuck source file:
 ```bash
-brainiac
+brainiac test/test.bf
 ```
 > (Development test output...)
 

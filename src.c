@@ -26,6 +26,31 @@ void error(const char *message) {
 	exit(EXIT_FAILURE);
 }
 
+// Compile bytecode from a path.
+uint8_t *compile(const char *path) {
+	printf("Compiling from path: '%s'\n", path);
+	
+	// Test bytecode.
+	uint8_t *bytecode = (uint8_t*)malloc(9);
+	
+	if (bytecode == NULL) {
+		error("Could not allocate test bytecode.");
+	}
+	
+	// Shuffle operations to test dispatch.
+	bytecode[0] = OP_RIGHT;
+	bytecode[1] = OP_INCREMENT;
+	bytecode[2] = OP_LEFT;
+	bytecode[3] = OP_DECREMENT;
+	bytecode[4] = OP_OUTPUT;
+	bytecode[5] = OP_BEGIN;
+	bytecode[6] = OP_INPUT;
+	bytecode[7] = OP_END;
+	bytecode[8] = OP_HALT; // Bytecode must end with a halt operation.
+	
+	return bytecode;
+}
+
 // Interpret bytecode from an instruction pointer.
 void interpret(uint8_t *ip) {
 	// Array of memory cells. Contains 2^16 cells to take advantage of wrapping.
@@ -122,33 +147,14 @@ void interpret(uint8_t *ip) {
 	#undef VM_DISPATCH
 }
 
-// Create test bytecode.
-uint8_t *createTestBytecode() {
-	// Test bytecode.
-	uint8_t *bytecode = (uint8_t*)malloc(9);
-	
-	if (bytecode == NULL) {
-		error("Could not allocate test bytecode.");
+// Test Brainiac.
+int main(int argc, const char *argv[]) {
+	if (argc != 2) {
+		error("Usage: brainiac <path>");
 	}
 	
-	// Shuffle operations to test dispatch.
-	bytecode[0] = OP_RIGHT;
-	bytecode[1] = OP_INCREMENT;
-	bytecode[2] = OP_LEFT;
-	bytecode[3] = OP_DECREMENT;
-	bytecode[4] = OP_OUTPUT;
-	bytecode[5] = OP_BEGIN;
-	bytecode[6] = OP_INPUT;
-	bytecode[7] = OP_END;
-	bytecode[8] = OP_HALT; // Bytecode must end with a halt operation.
-	
-	return bytecode;
-}
-
-// Test Brainiac.
-int main() {
 	// Bytecode to test the interpreter with.
-	uint8_t *bytecode = createTestBytecode();
+	uint8_t *bytecode = compile(argv[1]);
 	interpret(bytecode);
 	free(bytecode);
 }
