@@ -64,8 +64,6 @@ void interpret(uint8_t *ip) {
 	uint16_t dp = 0;
 	
 	#ifdef USE_COMPUTED_GOTO
-		printf("Using computed goto dispatch.\n");
-		
 		// Table of addresses to jump to for each opcode.
 		static void *dispatchTable[] = {
 			[OP_HALT] = &&vm_OP_HALT,
@@ -83,8 +81,6 @@ void interpret(uint8_t *ip) {
 		#define VM_DISPATCH goto *dispatchTable[*ip++]
 		#define VM_LOOP VM_DISPATCH;
 	#else
-		printf("Using switch case dispatch.\n");
-		
 		#define VM_LOOP for(;;) switch(*ip++)
 		#define VM_OP(opcode) case opcode:
 		#define VM_DISPATCH break
