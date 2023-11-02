@@ -21,8 +21,8 @@ void error(const char *message) {
 	exit(EXIT_FAILURE);
 }
 
-// Interpret bytecode.
-void interpret() {
+// Interpret bytecode from an instruction pointer.
+void interpret(uint8_t *ip) {
 	// Array of memory cells. Contains 2^16 cells to take advantage of wrapping.
 	uint8_t *cells = calloc(UINT16_MAX + 1, sizeof(uint8_t));
 	
@@ -33,11 +33,99 @@ void interpret() {
 	// Data pointer. The index of the current memory cell.
 	uint16_t dp = 0;
 	
-	free(cells);
+	#ifdef USE_COMPUTED_GOTO
+		error("Computed goto is not yet implemented.");
+	#else
+		#define VM_LOOP for(;;) switch(*ip++)
+		#define VM_OP(opcode) case opcode:
+		#define VM_DISPATCH break
+	#endif
+	
+	VM_LOOP {
+		VM_OP(OP_HALT) {
+			printf("Halt.\n");
+			free(cells);
+			return;
+		}
+		
+		VM_OP(OP_RIGHT) {
+			printf("Right.\n");
+			++dp;
+			VM_DISPATCH;
+		}
+		
+		VM_OP(OP_LEFT) {
+			printf("Left.\n");
+			--dp;
+			VM_DISPATCH;
+		}
+		
+		VM_OP(OP_INCREMENT) {
+			printf("Increment.\n");
+			++cells[dp];
+			VM_DISPATCH;
+		}
+		
+		VM_OP(OP_DECREMENT) {
+			printf("Decrement.\n");
+			--cells[dp];
+			VM_DISPATCH;
+		}
+		
+		VM_OP(OP_OUTPUT) {
+			printf("Output (TODO.)\n");
+			VM_DISPATCH;
+		}
+		
+		VM_OP(OP_INPUT) {
+			printf("Input (TODO.)\n");
+			VM_DISPATCH;
+		}
+		
+		VM_OP(OP_BEGIN) {
+			printf("Begin (TODO.)\n");
+			VM_DISPATCH;
+		}
+		
+		VM_OP(OP_END) {
+			printf("End (TODO.)\n");
+			VM_DISPATCH;
+		}
+	}
+	
+	#undef VM_LOOP
+	#undef VM_OP
+	#undef VM_DISPATCH
+}
+
+// Create test bytecode.
+uint8_t *createTestBytecode() {
+	// Test bytecode.
+	uint8_t *bytecode = (uint8_t*)malloc(9);
+	
+	if (bytecode == NULL) {
+		error("Could not allocate test bytecode.");
+	}
+	
+	// Shuffle operations to test dispatch.
+	bytecode[0] = OP_RIGHT;
+	bytecode[1] = OP_INCREMENT;
+	bytecode[2] = OP_LEFT;
+	bytecode[3] = OP_DECREMENT;
+	bytecode[4] = OP_OUTPUT;
+	bytecode[5] = OP_BEGIN;
+	bytecode[6] = OP_INPUT;
+	bytecode[7] = OP_END;
+	bytecode[8] = OP_HALT; // Bytecode must end with a halt operation.
+	
+	return bytecode;
 }
 
 // Test Brainiac.
 int main() {
-	interpret();
+	// Bytecode to test the interpreter with.
+	uint8_t *bytecode = createTestBytecode();
+	interpret(bytecode);
+	free(bytecode);
 	printf("Hello, Brainiac!\n");
 }
