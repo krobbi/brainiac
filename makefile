@@ -11,7 +11,7 @@ SRCS := $(wildcard $(SRC_DIR)/*.c)
 HDRS := $(wildcard $(SRC_DIR)/*.h)
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BIN_DIR)/%.o)
 EXEC := $(BIN_DIR)/brainiac
-TEST := test/cat.bf
+TEST := test/mandelbrot.bf
 
 # Add '.exe' extension to executable on Windows:
 ifeq ($(OS),Windows_NT)

@@ -6,11 +6,6 @@
 #include "opcodes.h"
 #include "vm.h"
 
-// Computed goto requires a GCC extension.
-#ifdef __GNUC__
-	#define USE_COMPUTED_GOTO
-#endif
-
 // A compiler's state.
 typedef struct {
 	// The number of bytes in the compiler's bytecode.

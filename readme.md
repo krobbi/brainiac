@@ -6,7 +6,7 @@ __Copyright &copy; 2023 Chris Roberts__ (Krobbizoid).
 1. [About](#about)
 2. [Usage](#usage)
 3. [Building](#building)
-4. [License](#license)
+4. [Credits and License](#credits-and-license)
 
 # About
 Brainiac is a [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) interpreter
@@ -46,14 +46,15 @@ make clean
 This subcommand requires `rm` from
 [Coreutils](https://gnu.org/software/coreutils).
 
-Make can also be used to run `test/cat.bf` after building:
+Make can also be used to run `test/mandelbrot.bf` after building:
 ```bash
 make test
 ```
 
-Enter `Ctrl+D` to exit the test program or `Ctrl+Z` on Windows.
+# Credits and License
+Mandelbrot set fractal viewer at `test/mandelbrot.bf` by Erik Bosman:  
+https://esoteric.sange.fi/brainfuck/utils/mandelbrot
 
-# License
 Brainiac is released under the MIT License:  
 https://krobbi.github.io/license/2023/mit.txt
 
