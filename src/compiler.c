@@ -6,6 +6,8 @@
 #include "compiler.h"
 #include "opcodes.h"
 
+#define MAX_LOOP_DEPTH 64
+
 // A compiler's state.
 typedef struct {
 	// Whether the compiler has encountered an error.
@@ -80,6 +82,10 @@ static void emitByte(Compiler *compiler, uint8_t byte) {
 
 // Begin a loop.
 static void beginLoop(Compiler *compiler) {
+	if (compiler->depth == MAX_LOOP_DEPTH) {
+		logError(compiler, "Too many nested loops.");
+	}
+	
 	emitByte(compiler, OP_BEGIN);
 	compiler->depth++;
 }
@@ -162,3 +168,5 @@ uint8_t *compileSource(const char *source) {
 	
 	return endCompiler(&compiler);
 }
+
+#undef MAX_LOOP_DEPTH
