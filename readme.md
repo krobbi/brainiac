@@ -22,10 +22,12 @@ which are probably faster than Brainiac due to some clever
 [optimizations](https://www.nayuki.io/page/optimizing-brainfuck-compiler).
 
 # Usage
-Run Brainiac from the command line with a path to a Brainfuck source file:
+Run Brainiac from the command line with a path to a Brainfuck source file to
+interpret it:
 ```bash
-brainiac <path>
+brainiac test/hello.bf
 ```
+> Hello, world!
 
 # Building
 Brainiac is built using [GCC](https://gnu.org/software/gcc) and
@@ -52,6 +54,9 @@ make test
 ```
 
 # Credits and License
+Hello world program at `test/hello.bf` by Khalid Sabry:  
+https://codegolf.stackexchange.com/questions/55422/hello-world/163590#163590
+
 Mandelbrot set fractal viewer at `test/mandelbrot.bf` by Erik Bosman:  
 https://esoteric.sange.fi/brainfuck/utils/mandelbrot
 
