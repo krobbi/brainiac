@@ -150,3 +150,15 @@ uint8_t *compilePath(const char *path) {
 	
 	return endCompiler(&compiler);
 }
+
+// Compile bytecode from source code.
+uint8_t *compileSource(const char *source) {
+	Compiler compiler;
+	initCompiler(&compiler);
+	
+	while (*source) {
+		compileCommand(&compiler, *source++);
+	}
+	
+	return endCompiler(&compiler);
+}

@@ -4,10 +4,8 @@
 #include "compiler.h"
 #include "vm.h"
 
-// Interpret bytecode from a source path and return an exit code.
-static int interpretPath(const char *path) {
-	uint8_t *bytecode = compilePath(path);
-	
+// Interpret and free bytecode and return an exit code.
+static int interpretBytecode(uint8_t *bytecode) {
 	if (bytecode != NULL) {
 		int exitCode = interpret(bytecode);
 		free(bytecode);
@@ -15,6 +13,11 @@ static int interpretPath(const char *path) {
 	} else {
 		return EXIT_FAILURE;
 	}
+}
+
+// Interpret bytecode from a source path and return an exit code.
+static int interpretPath(const char *path) {
+	return interpretBytecode(compilePath(path));
 }
 
 // Test Brainiac.
