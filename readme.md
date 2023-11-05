@@ -29,6 +29,20 @@ brainiac test/hello.bf
 ```
 > Hello, world!
 
+Run Brainiac from the command line without any arguments to enter REPL mode:
+```bash
+brainiac
+```
+> Brainiac REPL - Enter Brainfuck code or 'exit' to exit:
+>
+> bf: (prompt for input)
+
+Any input starting with `exit` will exit the REPL. Entering `Ctrl+D` or
+`Ctrl+Z` on Windows can also be used to exit.
+
+Pressing `Ctrl+C` will exit the program in interpreter mode or REPL mode. This
+is useful if a Brainfuck script enters an infinite loop.
+
 # Building
 Brainiac is built using [GCC](https://gnu.org/software/gcc) and
 [Make](https://gnu.org/software/make):

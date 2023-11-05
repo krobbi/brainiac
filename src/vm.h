@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 // Interpret bytecode from a pointer and return an exit code.
-int interpret(uint8_t *ip);
+int interpretBytecode(uint8_t *ip);
 
 #endif // brainiac_vm_h

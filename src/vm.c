@@ -5,7 +5,7 @@
 #include "vm.h"
 
 // Interpret bytecode from a pointer and return an exit code.
-int interpret(uint8_t *ip) {
+int interpretBytecode(uint8_t *ip) {
 #ifdef __GNUC__
 	__label__
 	vm_OP_HALT,

@@ -1,13 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "compiler.h"
 #include "vm.h"
 
-// Interpret and free bytecode and return an exit code.
-static int interpretBytecode(uint8_t *bytecode) {
+// Run a REPL and return an exit code.
+static int repl() {
+	printf("Brainiac REPL - Enter Brainfuck code or 'exit' to exit:\n\n");
+	char input[1024];
+	
+	for (;;) {
+		printf("bf: ");
+		
+		if (fgets(input, sizeof(input), stdin) == NULL || memcmp(input, "exit", 4) == 0) {
+			return EXIT_SUCCESS;
+		}
+		
+		uint8_t *bytecode = compileSource(input);
+		
+		if (bytecode != NULL) {
+			interpretBytecode(bytecode);
+			free(bytecode);
+		}
+		
+		putchar('\n');
+	}
+}
+
+// Interpret bytecode from a source path and return an exit code.
+static int interpret(const char *path) {
+	uint8_t *bytecode = compilePath(path);
+	
 	if (bytecode != NULL) {
-		int exitCode = interpret(bytecode);
+		int exitCode = interpretBytecode(bytecode);
 		free(bytecode);
 		return exitCode;
 	} else {
@@ -15,17 +41,14 @@ static int interpretBytecode(uint8_t *bytecode) {
 	}
 }
 
-// Interpret bytecode from a source path and return an exit code.
-static int interpretPath(const char *path) {
-	return interpretBytecode(compilePath(path));
-}
-
 // Test Brainiac.
 int main(int argc, const char *argv[]) {
-	if (argc == 2) {
-		return interpretPath(argv[1]);
+	if (argc == 1) {
+		return repl();
+	} else if (argc == 2) {
+		return interpret(argv[1]);
 	} else {
-		fprintf(stderr, "Usage: brainiac <path>\n");
+		fprintf(stderr, "Usage: brainiac [path]\n");
 		return EXIT_FAILURE;
 	}
 }
