@@ -37,6 +37,7 @@ int interpretBytecode(uint8_t *ip) {
 #define VM_OP(opcode) case opcode:
 #define VM_DISPATCH break
 #endif // __GNUC__
+#define VM_WORD (ip += 2, ip[-1] << 8 | ip[-2])
 	uint16_t mp = 0;
 	uint8_t *memory = (uint8_t*)calloc(UINT16_MAX + 1, sizeof(uint8_t));
 	
@@ -82,33 +83,21 @@ int interpretBytecode(uint8_t *ip) {
 			VM_DISPATCH;
 		}
 		
-		// TODO: Optimize loops by including offset operands.
 		VM_OP(OP_BEGIN) {
+			int offset = VM_WORD;
+			
 			if (!memory[mp]) {
-				int depth = 1;
-				
-				do {
-					switch (*ip++) {
-						case OP_BEGIN: ++depth; break;
-						case OP_END: --depth; break;
-					}
-				} while (depth);
+				ip += offset;
 			}
 			
 			VM_DISPATCH;
 		}
 		
 		VM_OP(OP_END) {
+			int offset = VM_WORD;
+			
 			if (memory[mp]) {
-				int depth = 1;
-				--ip;
-				
-				do {
-					switch (*--ip) {
-						case OP_BEGIN: --depth; break;
-						case OP_END: ++depth; break;
-					}
-				} while (depth);
+				ip -= offset;
 			}
 			
 			VM_DISPATCH;
@@ -117,4 +106,5 @@ int interpretBytecode(uint8_t *ip) {
 #undef VM_LOOP
 #undef VM_OP
 #undef VM_DISPATCH
+#undef VM_WORD
 }

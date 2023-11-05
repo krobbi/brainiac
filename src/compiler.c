@@ -24,6 +24,9 @@ typedef struct {
 	
 	// The compiler's loop depth.
 	int depth;
+	
+	// The compiler's loop stack.
+	int loops[MAX_LOOP_DEPTH];
 } Compiler;
 
 // Log an error message to a compiler.
@@ -67,6 +70,14 @@ static void resizeBytecode(Compiler *compiler, int capacity) {
 	}
 }
 
+// Patch a word to a compiler's bytecode.
+static void patchWord(Compiler *compiler, int index, uint16_t word) {
+	if (!compiler->hasError) {
+		compiler->bytecode[index] = word & 0xff;
+		compiler->bytecode[index + 1] = (word >> 8) & 0xff;
+	}
+}
+
 // Emit a byte to a compiler's bytecode.
 static void emitByte(Compiler *compiler, uint8_t byte) {
 	if (compiler->count >= compiler->capacity) {
@@ -80,21 +91,41 @@ static void emitByte(Compiler *compiler, uint8_t byte) {
 	compiler->count++;
 }
 
+// Emit a word to a compiler's bytecode.
+static void emitWord(Compiler *compiler, uint16_t word) {
+	emitByte(compiler, 0);
+	emitByte(compiler, 0);
+	patchWord(compiler, compiler->count - 2, word);
+}
+
 // Begin a loop.
 static void beginLoop(Compiler *compiler) {
-	if (compiler->depth == MAX_LOOP_DEPTH) {
+	if (compiler->depth < MAX_LOOP_DEPTH) {
+		compiler->loops[compiler->depth] = compiler->count;
+	} else if (compiler->depth == MAX_LOOP_DEPTH) {
 		logError(compiler, "Too many nested loops.");
 	}
 	
 	emitByte(compiler, OP_BEGIN);
+	emitWord(compiler, 0);
 	compiler->depth++;
 }
 
 // End a loop.
 static void endLoop(Compiler *compiler) {
 	if (compiler->depth > 0) {
-		emitByte(compiler, OP_END);
 		compiler->depth--;
+		int target = compiler->depth < MAX_LOOP_DEPTH
+				? compiler->loops[compiler->depth] : compiler->count;
+		int offset = compiler->count - target;
+		
+		if ((uint32_t)offset > UINT16_MAX) {
+			logError(compiler, "Too much code in loop.");
+		}
+		
+		emitByte(compiler, OP_END);
+		emitWord(compiler, offset);
+		patchWord(compiler, target + 1, offset);
 	} else {
 		logError(compiler, "Cannot use ']' without an opening '['.");
 	}
