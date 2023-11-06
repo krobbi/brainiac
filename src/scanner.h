@@ -21,11 +21,8 @@ typedef struct {
 	const char *next;
 } Scanner;
 
-// Initialize a scanner.
-void initScanner(Scanner *scanner);
-
-// Scan tokens from source code.
-void scanFromSource(Scanner *scanner, const char *source);
+// Initialize a scanner from source code.
+void initScannerSource(Scanner *scanner, const char *source);
 
 // Scan the next token.
 Token scanToken(Scanner *scanner);

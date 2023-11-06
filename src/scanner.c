@@ -39,13 +39,8 @@ static Token scanRawToken(Scanner *scanner) {
 	}
 }
 
-// Initialize a scanner.
-void initScanner(Scanner *scanner) {
-	scanner->next = NULL;
-}
-
-// Scan tokens from source code.
-void scanFromSource(Scanner *scanner, const char *source) {
+// Initialize a scanner from source code.
+void initScannerSource(Scanner *scanner, const char *source) {
 	scanner->next = source;
 }
 
