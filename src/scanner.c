@@ -18,7 +18,7 @@ static int advance(Scanner *scanner) {
 	}
 }
 
-// Scan the next token or non-token.
+// Scan the next token or comment.
 static Token scanRawToken(Scanner *scanner) {
 	int character = advance(scanner);
 	

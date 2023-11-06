@@ -3,14 +3,14 @@
 
 // A syntactic element of source code.
 typedef enum {
-	TK_NONE, // Non-token.
+	TK_NONE, // Comment.
 	TK_EOF, // End of file.
+	TK_GREATER, // '>'.
+	TK_LESS, // '<'.
 	TK_PLUS, // '+'.
-	TK_COMMA, // ','.
 	TK_MINUS, // '-'.
 	TK_DOT, // '.'.
-	TK_LESS, // '<'.
-	TK_GREATER, // '>'.
+	TK_COMMA, // ','.
 	TK_LBRACKET, // '['.
 	TK_RBRACKET, // ']'.
 } Token;
