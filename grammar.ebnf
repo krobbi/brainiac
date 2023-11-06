@@ -1,0 +1,7 @@
+(* Brainfuck Reference Grammar *)
+
+program = { command }, EOF ;
+command = loop | movement | addition | "." | "," ;
+loop = "[", { command }, "]" ;
+movement = ( ">" | "<" ), { ">" | "<" } ;
+addition = ( "+" | "-" ), { "+" | "-" } ;
