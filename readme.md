@@ -21,14 +21,8 @@ Brainfuck implementations have already been created many times before. Many of
 which are probably faster than Brainiac due to some clever
 [optimizations](https://www.nayuki.io/page/optimizing-brainfuck-compiler).
 
-[Brainiac version 2](https://github.com/krobbi/brainiac/tree/v2) is currently
-in development. It aims to produce faster bytecode by parsing an intermediate
-[abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
-representation. The nodes of this tree can be merged to represent more complex
-instructions that would perform more work in one cycle of the interpreter. For
-example, 10 increment instructions could be optimized into a single 'add 10'
-instruction. The bytecode will also gain new instructions to deal with these
-cases.
+Brainiac version 2 is currently in development, so this documentation may not
+be accurate.
 
 # Usage
 Run Brainiac from the command line with a path to a Brainfuck source file to
