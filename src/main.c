@@ -1,35 +1,45 @@
 #include <stdio.h>
 
-#include "scanner.h"
+#include "node.h"
 
-// Dump a message from a token.
-static void dumpToken(Token token) {
-	switch (token) {
-		case TK_NONE: printf("(None)"); break;
-		case TK_EOF: printf("(EOF)"); break;
-		case TK_PLUS: printf("+"); break;
-		case TK_COMMA: printf(","); break;
-		case TK_MINUS: printf("-"); break;
-		case TK_DOT: printf("."); break;
-		case TK_LESS: printf("<"); break;
-		case TK_GREATER: printf(">"); break;
-		case TK_LBRACKET: printf("["); break;
-		case TK_RBRACKET: printf("]"); break;
+// Print an AST node and its children.
+static void printNode(Node *node, int depth) {
+	for (int i = 0; i < depth; i++) {
+		printf(" *");
+	}
+	
+	if (depth > 0) {
+		printf(" ");
+	}
+	
+	switch (node->kind) {
+		case NODE_PROGRAM: printf("({})\n"); break;
+		case NODE_LOOP: printf("([])\n"); break;
+		case NODE_MOVE: printf("(> * %d)\n", node->value); break;
+		case NODE_ADD: printf("(+ * %d)\n", node->value); break;
+		case NODE_OUTPUT: printf("(.)\n"); break;
+		case NODE_INPUT: printf("(,)\n"); break;
+	}
+	
+	for (int i = 0; i < node->childCount; i++) {
+		printNode(node->children[i], depth + 1);
 	}
 }
 
-// Test the scanner.
+// Create a loop for testing AST nodes.
+static Node *createTestLoop() {
+	Node *loop = newNode(NODE_LOOP, 0);
+	appendNode(loop, newNode(NODE_OUTPUT, 0));
+	appendNode(loop, newNode(NODE_INPUT, 0));
+	return loop;
+}
+
+// Test AST nodes.
 int main() {
-	Scanner scanner;
-	initScanner(&scanner);
-	scanFromSource(&scanner, "Comment 1 , [.,] Comment 2 < +- > Comment 3");
-	Token token;
-	
-	do {
-		token = scanToken(&scanner);
-		dumpToken(token);
-	} while (token != TK_EOF);
-	
-	printf("\n");
+	Node *program = newNode(NODE_PROGRAM, 0);
+	appendNode(program, newNode(NODE_INPUT, 0));
+	appendNode(program, createTestLoop());
+	printNode(program, 0);
+	freeNode(program);
 	return 0;
 }
