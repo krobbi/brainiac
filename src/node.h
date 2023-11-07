@@ -36,6 +36,6 @@ Node *newNode(NodeKind kind, int value);
 void freeNode(Node *node);
 
 // Append a child AST to node to a parent AST node.
-void appendNode(Node *parent, Node *child);
+Node *appendNode(Node *parent, Node *child);
 
 #endif // BRAINIAC_NODE_H

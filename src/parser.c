@@ -70,11 +70,7 @@ static Node *parseLoop(Parser *parser) {
 	Node *loop = newNode(NODE_LOOP, 0);
 	
 	while (!match(parser, TK_RBRACKET) && !match(parser, TK_EOF)) {
-		Node *command = parseCommand(parser);
-		
-		if (command != NULL) {
-			appendNode(loop, command);
-		}
+		loop = appendNode(loop, parseCommand(parser));
 	}
 	
 	if (accept(parser, TK_RBRACKET)) {
@@ -87,9 +83,7 @@ static Node *parseLoop(Parser *parser) {
 
 // Parse a command.
 static Node *parseCommand(Parser *parser) {
-	Token kind = advance(parser);
-	
-	switch (kind) {
+	switch (advance(parser)) {
 		case TK_GREATER: return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, 1);
 		case TK_LESS: return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, -1);
 		case TK_PLUS: return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, 1);
@@ -107,11 +101,7 @@ static Node *parseProgram(Parser *parser) {
 	Node *program = newNode(NODE_PROGRAM, 0);
 	
 	while (!match(parser, TK_EOF)) {
-		Node *command = parseCommand(parser);
-		
-		if (command != NULL) {
-			appendNode(program, command);
-		}
+		program = appendNode(program, parseCommand(parser));
 	}
 	
 	return program;
