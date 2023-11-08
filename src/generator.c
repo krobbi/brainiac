@@ -22,18 +22,6 @@ static void initBuffer(Buffer *buffer) {
 	buffer->bytes = NULL;
 }
 
-// Shrink a buffer to its minimum capacity.
-static void shrinkBuffer(Buffer *buffer) {
-	if (buffer->capacity > buffer->count) {
-		buffer->capacity = buffer->count;
-		buffer->bytes = (uint8_t*)realloc(buffer->bytes, buffer->capacity * sizeof(uint8_t));
-		
-		if (buffer->bytes == NULL) {
-			exit(EXIT_FAILURE);
-		}
-	}
-}
-
 // Put a U8 value to a buffer.
 static void putU8(Buffer *buffer, uint8_t value) {
 	if (buffer->count == buffer->capacity) {
@@ -160,11 +148,10 @@ static void generateNodeCode(Buffer *buffer, Node *node) {
 	}
 }
 
-// Generate bytecode from an AST.
-uint8_t *generateCode(Node *node) {
+// Generate bytecode from a program.
+uint8_t *generateCode(Node *program) {
 	Buffer buffer;
 	initBuffer(&buffer);
-	generateNodeCode(&buffer, node);
-	shrinkBuffer(&buffer);
+	generateNodeCode(&buffer, program);
 	return buffer.bytes;
 }

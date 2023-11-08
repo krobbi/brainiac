@@ -2,8 +2,9 @@
 #define BRAINIAC_PARSER_H
 
 #include "node.h"
+#include "scanner.h"
 
-// Parse a program from source code.
-Node *parseSource(const char *source);
+// Parse a program from a scanner.
+Node *parseScanner(Scanner *scanner);
 
 #endif // BRAINIAC_PARSER_H

@@ -5,7 +5,7 @@
 
 #include "node.h"
 
-// Generate bytecode from an AST.
-uint8_t *generateCode(Node *node);
+// Generate bytecode from a program.
+uint8_t *generateCode(Node *program);
 
 #endif // BRAINIAC_GENERATOR_H

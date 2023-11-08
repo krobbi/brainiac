@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "parser.h"
-#include "scanner.h"
 
 // Parses an AST from a scanner.
 typedef struct {
@@ -143,11 +142,9 @@ static Node *parseProgram(Parser *parser) {
 	return program;
 }
 
-// Parse a program from source code.
-Node *parseSource(const char *source) {
-	Scanner scanner;
+// Parse a program from a scanner.
+Node *parseScanner(Scanner *scanner) {
 	Parser parser;
-	initScannerSource(&scanner, source);
-	initParser(&parser, &scanner);
+	initParser(&parser, scanner);
 	return parseProgram(&parser);
 }
