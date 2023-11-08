@@ -1,5 +1,5 @@
-#ifndef BRAINIAC_OPCODES_H
-#define BRAINIAC_OPCODES_H
+#ifndef BRAINIAC_OPCODE_H
+#define BRAINIAC_OPCODE_H
 
 // A bytecode opcode.
 enum {
@@ -30,4 +30,4 @@ enum {
 	OP_BNZ_U16, // Branch backward by U16 operand if pointed memory is non-zero.
 };
 
-#endif // BRAINIAC_OPCODES_H
+#endif // BRAINIAC_OPCODE_H

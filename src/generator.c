@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "generator.h"
-#include "opcodes.h"
+#include "opcode.h"
 
 // A buffer of bytes.
 typedef struct {
