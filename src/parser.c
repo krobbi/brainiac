@@ -97,13 +97,20 @@ static Node *parseCommand(Parser *parser) {
 		case TK_EOF:
 			fprintf(stderr, "Bug: Encountered end of file token while parsing command.\n");
 			break;
-		case TK_GREATER: return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, 1);
-		case TK_LESS: return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, -1);
-		case TK_PLUS: return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, 1);
-		case TK_MINUS: return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, -1);
-		case TK_DOT: return newNode(NODE_OUTPUT, 0);
-		case TK_COMMA: return newNode(NODE_INPUT, 0);
-		case TK_LBRACKET: return parseLoop(parser);
+		case TK_GREATER:
+			return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, 1);
+		case TK_LESS:
+			return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, -1);
+		case TK_PLUS:
+			return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, 1);
+		case TK_MINUS:
+			return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, -1);
+		case TK_DOT:
+			return newNode(NODE_OUTPUT, 0);
+		case TK_COMMA:
+			return newNode(NODE_INPUT, 0);
+		case TK_LBRACKET:
+			return parseLoop(parser);
 		case TK_RBRACKET:
 			fprintf(stderr, "Cannot use ']' without a matching opening '['.\n");
 			break;
