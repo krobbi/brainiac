@@ -1,5 +1,3 @@
-#include <stddef.h>
-
 #include "compiler.h"
 #include "generator.h"
 #include "parser.h"

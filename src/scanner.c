@@ -1,21 +1,27 @@
-#include <stdio.h>
-
 #include "scanner.h"
 
-// Advance to the next character.
-static int advance(Scanner *scanner) {
-	if (scanner->next != NULL) {
-		char character = *scanner->next++;
-		
-		if (character != '\0') {
-			return (int)(unsigned char)character;
-		} else {
-			scanner->next = NULL;
-			return EOF;
-		}
+// Advance to the next character in file mode.
+static int advanceFile(Scanner *scanner) {
+	return fgetc(scanner->file);
+}
+
+// Advance to the next character in source mode.
+static int advanceSource(Scanner *scanner) {
+	if (*scanner->next != '\0') {
+		return (int)(unsigned char)*scanner->next++;
 	} else {
 		return EOF;
 	}
+}
+
+// Advance to the next character.
+static int advance(Scanner *scanner) {
+	switch (scanner->mode) {
+		case SCANNER_MODE_FILE: return advanceFile(scanner);
+		case SCANNER_MODE_SOURCE: return advanceSource(scanner);
+	}
+	
+	return EOF;
 }
 
 // Scan the next token or comment.
@@ -39,8 +45,17 @@ static Token scanRawToken(Scanner *scanner) {
 	}
 }
 
+// Initialize a scanner from a file.
+void initScannerFile(Scanner *scanner, FILE *file) {
+	scanner->mode = SCANNER_MODE_FILE;
+	scanner->file = file;
+	scanner->next = NULL;
+}
+
 // Initialize a scanner from source code.
 void initScannerSource(Scanner *scanner, const char *source) {
+	scanner->mode = SCANNER_MODE_SOURCE;
+	scanner->file = NULL;
 	scanner->next = source;
 }
 
