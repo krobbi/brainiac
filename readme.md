@@ -21,9 +21,6 @@ Brainfuck implementations have already been created many times before. Many of
 which are probably faster than Brainiac due to some clever
 [optimizations](https://www.nayuki.io/page/optimizing-brainfuck-compiler).
 
-Brainiac version 2 is currently in development, so this documentation may not
-be accurate.
-
 # Usage
 Run Brainiac from the command line with a path to a Brainfuck source file to
 interpret it:
