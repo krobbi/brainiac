@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "compiler.h"
 #include "generator.h"
 #include "parser.h"
@@ -5,14 +7,37 @@
 
 // Compile bytecode from a scanner.
 static uint8_t *compileScanner(Scanner *scanner) {
-	Node *ast = parseScanner(scanner);
+	Node *program = parseScanner(scanner);
 	
-	if (ast == NULL) {
+	if (program == NULL) {
 		return NULL;
 	}
 	
-	uint8_t *bytecode = generateCode(ast);
-	freeNode(ast);
+	uint8_t *bytecode = generateCode(program);
+	freeNode(program);
+	return bytecode;
+}
+
+// Compile bytecode from a path.
+uint8_t *compilePath(const char *path) {
+	FILE *file = fopen(path, "rb");
+	
+	if (file == NULL) {
+		fprintf(stderr, "Could not open '%s', file may not exist.\n", path);
+		return NULL;
+	}
+	
+	Scanner scanner;
+	initScannerFile(&scanner, file);
+	uint8_t *bytecode = compileScanner(&scanner);
+	
+	if (ferror(file) || !feof(file)) {
+		fprintf(stderr, "Encountered an error while reading '%s'.\n", path);
+		free(bytecode);
+		bytecode = NULL;
+	}
+	
+	fclose(file);
 	return bytecode;
 }
 

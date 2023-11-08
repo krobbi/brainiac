@@ -95,17 +95,17 @@ static void printBytecode(uint8_t *bytecode) {
 // Test the compiler.
 int main(int argc, const char *argv[]) {
 	if (argc == 2) {
-		uint8_t *bytecode = compileSource(argv[1]);
+		uint8_t *bytecode = compilePath(argv[1]);
 		
 		if (bytecode == NULL) {
-			return 1;
+			return EXIT_FAILURE;
 		}
 		
 		printBytecode(bytecode);
 		free(bytecode);
-		return 0;
+		return EXIT_SUCCESS;
 	} else {
-		fprintf(stderr, "Usage: brainiac <source>\n");
-		return 1;
+		fprintf(stderr, "Usage: brainiac <path>\n");
+		return EXIT_FAILURE;
 	}
 }
