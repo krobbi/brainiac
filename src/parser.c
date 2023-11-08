@@ -41,12 +41,6 @@ static bool accept(Parser *parser, Token kind) {
 	}
 }
 
-// Log an error message and return a null node.
-static Node *error(const char *message) {
-	fprintf(stderr, "%s\n", message);
-	return NULL;
-}
-
 // Parse a sequence.
 static Node *parseSequence(Parser *parser, NodeKind kind, Token neg, Token pos, int value) {
 	while (match(parser, neg) || match(parser, pos)) {
@@ -67,23 +61,42 @@ static Node *parseCommand(Parser *parser);
 
 // Parse a loop.
 static Node *parseLoop(Parser *parser) {
+	bool hasError = false;
 	Node *loop = newNode(NODE_LOOP, 0);
 	
 	while (!match(parser, TK_RBRACKET) && !match(parser, TK_EOF)) {
-		loop = appendNode(loop, parseCommand(parser));
+		Node *command = parseCommand(parser);
+		
+		if (command == NULL) {
+			hasError = true;
+			continue;
+		}
+		
+		appendNode(loop, command);
 	}
 	
-	if (accept(parser, TK_RBRACKET)) {
-		return loop;
-	} else {
-		freeNode(loop);
-		return error("Cannot use '[' without a matching closing ']'.");
+	if (!accept(parser, TK_RBRACKET)) {
+		fprintf(stderr, "Cannot use '[' without a matching closing ']'.\n");
+		hasError = true;
 	}
+	
+	if (hasError) {
+		freeNode(loop);
+		return NULL;
+	}
+	
+	return loop;
 }
 
 // Parse a command.
 static Node *parseCommand(Parser *parser) {
 	switch (advance(parser)) {
+		case TK_NONE:
+			fprintf(stderr, "Bug: Encountered comment token while parsing command.\n");
+			break;
+		case TK_EOF:
+			fprintf(stderr, "Bug: Encountered end of file token while parsing command.\n");
+			break;
 		case TK_GREATER: return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, 1);
 		case TK_LESS: return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, -1);
 		case TK_PLUS: return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, 1);
@@ -91,17 +104,33 @@ static Node *parseCommand(Parser *parser) {
 		case TK_DOT: return newNode(NODE_OUTPUT, 0);
 		case TK_COMMA: return newNode(NODE_INPUT, 0);
 		case TK_LBRACKET: return parseLoop(parser);
-		case TK_RBRACKET: return error("Cannot use ']' without a matching opening '['.");
-		default: return error("Bug: Unhandled token kind in command parser.");
+		case TK_RBRACKET:
+			fprintf(stderr, "Cannot use ']' without a matching opening '['.\n");
+			break;
 	}
+	
+	return NULL;
 }
 
 // Parse a program.
 static Node *parseProgram(Parser *parser) {
+	bool hasError = false;
 	Node *program = newNode(NODE_PROGRAM, 0);
 	
 	while (!match(parser, TK_EOF)) {
-		program = appendNode(program, parseCommand(parser));
+		Node *command = parseCommand(parser);
+		
+		if (command == NULL) {
+			hasError = true;
+			continue;
+		}
+		
+		appendNode(program, command);
+	}
+	
+	if (hasError) {
+		freeNode(program);
+		return NULL;
 	}
 	
 	return program;

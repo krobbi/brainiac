@@ -32,10 +32,10 @@ typedef struct Node {
 // Allocate a new AST node from its kind and value.
 Node *newNode(NodeKind kind, int value);
 
+// Append a child AST to node to a parent AST node.
+void appendNode(Node *parent, Node *child);
+
 // Free an AST node and its children.
 void freeNode(Node *node);
-
-// Append a child AST to node to a parent AST node.
-Node *appendNode(Node *parent, Node *child);
 
 #endif // BRAINIAC_NODE_H
