@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "generator.h"
@@ -70,6 +71,7 @@ static void generateLoopCode(Buffer *buffer, Node *node) {
 	}
 	
 	if (offset > UINT16_MAX) {
+		fprintf(stderr, "Could not compile loop because it contains too much code.\n");
 		exit(EXIT_FAILURE);
 	}
 	
