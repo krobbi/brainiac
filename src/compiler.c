@@ -15,10 +15,15 @@ static uint8_t *compileScanner(Scanner *scanner) {
 	if (program == NULL) {
 		return NULL;
 	}
-#ifdef BRAINIAC_DEBUG
-	printProgram(program);
-#endif // BRAINIAC_DEBUG
+	
 	uint8_t *bytecode = compileProgram(program);
+#ifdef BRAINIAC_DEBUG
+	printf("Parsed AST:\n");
+	printProgram(program);
+	printf("\nCompiled bytecode:\n");
+	printBytecode(bytecode);
+	printf("\n");
+#endif // BRAINIAC_DEBUG
 	freeNode(program);
 	return bytecode;
 }
