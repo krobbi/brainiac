@@ -12,7 +12,9 @@ static uint8_t *compileScanner(Scanner *scanner) {
 	if (program == NULL) {
 		return NULL;
 	}
-	
+#ifdef BRAINIAC_DEBUG
+	printf("Debug mode enabled.\n");
+#endif // BRAINIAC_DEBUG
 	uint8_t *bytecode = generateCode(program);
 	freeNode(program);
 	return bytecode;

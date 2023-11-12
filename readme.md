@@ -54,7 +54,16 @@ The source files in `src/` will produce the binary file `bin/brainiac` or
 `bin/brainiac.exe` on Windows, along with intermediate object files. These
 object files are not necessary for the binary to run.
 
-Make can be used to remove the `bin/` directory:
+Make can be used to build Brainiac in debug mode:
+```bash
+make debug
+```
+
+In debug mode the `BRAINIAC_DEBUG` macro is defined, which causes
+`Debug mode enabled.` to be printed after successful parsing. The binary is
+also optimized for use with debugging software.
+
+Make can also be used to remove the `bin/` directory:
 ```bash
 make clean
 ```

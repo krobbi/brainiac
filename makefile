@@ -17,10 +17,15 @@ ifeq ($(OS),Windows_NT)
 	EXEC := $(EXEC).exe
 endif
 
-# Build Brainiac:
+# Build Brainiac in release mode:
 .PHONY: all
 all: CFLAGS += -O2 -flto
 all: $(EXEC)
+
+# Build Brainiac in debug mode:
+.PHONY: debug
+debug: CFLAGS += -DBRAINIAC_DEBUG -g3 -Og
+debug: $(EXEC)
 
 # Clean binaries directory:
 .PHONY: clean
