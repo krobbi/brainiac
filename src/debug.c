@@ -59,9 +59,11 @@ static const char *getNodeKindName(NodeKind kind) {
 // Return whether a node kind has a value.
 static bool nodeKindHasValue(NodeKind kind) {
 	switch (kind) {
-		case NODE_MOVE: return true;
-		case NODE_ADD: return true;
-		default: return false;
+		case NODE_MOVE:
+		case NODE_ADD:
+			return true;
+		default:
+			return false;
 	}
 }
 
