@@ -2,7 +2,7 @@
 #define BRAINIAC_OPCODE_H
 
 // A bytecode opcode.
-enum {
+typedef enum {
 	OP_HLT, // Halt execution.
 	
 	OP_RGT, // Increment memory pointer.
@@ -28,6 +28,6 @@ enum {
 	
 	OP_BNZ_U8, // Branch backward by U8 operand if pointed memory is non-zero.
 	OP_BNZ_U16, // Branch backward by U16 operand if pointed memory is non-zero.
-};
+} Opcode;
 
 #endif // BRAINIAC_OPCODE_H
