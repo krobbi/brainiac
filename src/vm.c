@@ -50,7 +50,7 @@ void interpretBytecode(uint8_t *bytecode) {
 #define VM_DISPATCH() goto *dispatchTable[VM_U8()]
 #define VM_LOOP() VM_DISPATCH();
 #else // __GNUC__
-#define VM_LOOP() for(;;) switch(VM_U8())
+#define VM_LOOP() for (;;) switch (VM_U8())
 #define VM_OP(opcode) case opcode:
 #define VM_DISPATCH() break
 #endif // __GNUC__
