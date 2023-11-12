@@ -3,31 +3,21 @@
 
 #include <stdio.h>
 
-// A scanner's mode.
-typedef enum {
-	SCANNER_MODE_FILE, // Scan from file input stream.
-	SCANNER_MODE_SOURCE, // Scan from source code string.
-} ScannerMode;
-
 // A syntactic element of source code.
 typedef enum {
-	TK_NONE, // Comment.
-	TK_EOF, // End of file.
-	TK_GREATER, // '>'.
-	TK_LESS, // '<'.
-	TK_PLUS, // '+'.
-	TK_MINUS, // '-'.
-	TK_DOT, // '.'.
-	TK_COMMA, // ','.
-	TK_LBRACKET, // '['.
-	TK_RBRACKET, // ']'.
+	TOKEN_EOF, // End of file.
+	TOKEN_GREATER, // '>'.
+	TOKEN_LESS, // '<'.
+	TOKEN_PLUS, // '+'.
+	TOKEN_MINUS, // '-'.
+	TOKEN_DOT, // '.'.
+	TOKEN_COMMA, // ','.
+	TOKEN_LBRACKET, // '['.
+	TOKEN_RBRACKET, // ']'.
 } Token;
 
 // Scans tokens from source code.
 typedef struct {
-	// The scanner's mode.
-	ScannerMode mode;
-	
 	// The scanner's file.
 	FILE *file;
 	

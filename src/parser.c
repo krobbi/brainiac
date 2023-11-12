@@ -62,7 +62,7 @@ static Node *parseLoop(Parser *parser) {
 	bool hasError = false;
 	Node *loop = newNode(NODE_LOOP, 0);
 	
-	while (!match(parser, TK_RBRACKET) && !match(parser, TK_EOF)) {
+	while (!match(parser, TOKEN_RBRACKET) && !match(parser, TOKEN_EOF)) {
 		Node *command = parseCommand(parser);
 		
 		if (command == NULL) {
@@ -73,7 +73,7 @@ static Node *parseLoop(Parser *parser) {
 		appendNode(loop, command);
 	}
 	
-	if (!accept(parser, TK_RBRACKET)) {
+	if (!accept(parser, TOKEN_RBRACKET)) {
 		fprintf(stderr, "Cannot use '[' without a matching closing ']'.\n");
 		hasError = true;
 	}
@@ -89,27 +89,24 @@ static Node *parseLoop(Parser *parser) {
 // Parse a command.
 static Node *parseCommand(Parser *parser) {
 	switch (advance(parser)) {
-		case TK_NONE:
-			fprintf(stderr, "Bug: Encountered comment token while parsing command.\n");
+		case TOKEN_EOF:
+			fprintf(stderr, "Encountered end of file while parsing command.\n");
 			break;
-		case TK_EOF:
-			fprintf(stderr, "Bug: Encountered end of file token while parsing command.\n");
-			break;
-		case TK_GREATER:
-			return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, 1);
-		case TK_LESS:
-			return parseSequence(parser, NODE_MOVE, TK_LESS, TK_GREATER, -1);
-		case TK_PLUS:
-			return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, 1);
-		case TK_MINUS:
-			return parseSequence(parser, NODE_ADD, TK_MINUS, TK_PLUS, -1);
-		case TK_DOT:
+		case TOKEN_GREATER:
+			return parseSequence(parser, NODE_MOVE, TOKEN_LESS, TOKEN_GREATER, 1);
+		case TOKEN_LESS:
+			return parseSequence(parser, NODE_MOVE, TOKEN_LESS, TOKEN_GREATER, -1);
+		case TOKEN_PLUS:
+			return parseSequence(parser, NODE_ADD, TOKEN_MINUS, TOKEN_PLUS, 1);
+		case TOKEN_MINUS:
+			return parseSequence(parser, NODE_ADD, TOKEN_MINUS, TOKEN_PLUS, -1);
+		case TOKEN_DOT:
 			return newNode(NODE_OUTPUT, 0);
-		case TK_COMMA:
+		case TOKEN_COMMA:
 			return newNode(NODE_INPUT, 0);
-		case TK_LBRACKET:
+		case TOKEN_LBRACKET:
 			return parseLoop(parser);
-		case TK_RBRACKET:
+		case TOKEN_RBRACKET:
 			fprintf(stderr, "Cannot use ']' without a matching opening '['.\n");
 			break;
 	}
@@ -122,7 +119,7 @@ static Node *parseProgram(Parser *parser) {
 	bool hasError = false;
 	Node *program = newNode(NODE_PROGRAM, 0);
 	
-	while (!match(parser, TK_EOF)) {
+	while (!match(parser, TOKEN_EOF)) {
 		Node *command = parseCommand(parser);
 		
 		if (command == NULL) {
