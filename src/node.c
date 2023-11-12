@@ -2,7 +2,7 @@
 
 #include "node.h"
 
-// Allocate a new AST node from its kind and value.
+// Allocate a new node from its kind and value.
 Node *newNode(NodeKind kind, int value) {
 	Node *node = (Node*)malloc(sizeof(Node));
 	
@@ -18,7 +18,7 @@ Node *newNode(NodeKind kind, int value) {
 	return node;
 }
 
-// Append a child AST node to a parent AST node.
+// Append a child node to a parent node.
 void appendNode(Node *parent, Node *child) {
 	if (parent->childCount == parent->childCapacity) {
 		parent->childCapacity = parent->childCapacity != 0 ? parent->childCapacity * 2 : 1;
@@ -32,7 +32,7 @@ void appendNode(Node *parent, Node *child) {
 	parent->children[parent->childCount++] = child;
 }
 
-// Free an AST node and its children.
+// Free a node and its children.
 void freeNode(Node *node) {
 	for (int i = 0; i < node->childCount; i++) {
 		freeNode(node->children[i]);

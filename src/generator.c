@@ -43,25 +43,25 @@ static void putU16(Buffer *buffer, uint16_t value) {
 	putU8(buffer, (value >> 8) & 0xff);
 }
 
-// Generate bytecode from an AST node.
-static void generateNodeCode(Buffer *buffer, Node *node);
+// Generate bytecode from a node.
+static void generateNodeBytecode(Buffer *buffer, Node *node);
 
-// Generate bytecode from a program AST node.
-static void generateProgramCode(Buffer *buffer, Node *node) {
+// Generate bytecode from a program node.
+static void generateProgramNodeBytecode(Buffer *buffer, Node *node) {
 	for (int i = 0; i < node->childCount; i++) {
-		generateNodeCode(buffer, node->children[i]);
+		generateNodeBytecode(buffer, node->children[i]);
 	}
 	
 	putU8(buffer, OP_HLT);
 }
 
-// Generate bytecode from a loop AST node.
-static void generateLoopCode(Buffer *buffer, Node *node) {
+// Generate bytecode from a loop node.
+static void generateLoopNodeBytecode(Buffer *buffer, Node *node) {
 	Buffer body;
 	initBuffer(&body);
 	
 	for (int i = 0; i < node->childCount; i++) {
-		generateNodeCode(&body, node->children[i]);
+		generateNodeBytecode(&body, node->children[i]);
 	}
 	
 	uint32_t offset = (uint32_t)(body.count + 2);
@@ -98,8 +98,8 @@ static void generateLoopCode(Buffer *buffer, Node *node) {
 	}
 }
 
-// Generate bytecode from a move AST node.
-static void generateMoveCode(Buffer *buffer, Node *node) {
+// Generate bytecode from a move node.
+static void generateMoveNodeBytecode(Buffer *buffer, Node *node) {
 	int16_t value = (int16_t)node->value;
 	
 	if (value == 1) {
@@ -121,8 +121,8 @@ static void generateMoveCode(Buffer *buffer, Node *node) {
 	}
 }
 
-// Generate bytecode from an add AST node.
-static void generateAddCode(Buffer *buffer, Node *node) {
+// Generate bytecode from an add node.
+static void generateAddNodeBytecode(Buffer *buffer, Node *node) {
 	int8_t value = (int8_t)node->value;
 	
 	if (value == 1) {
@@ -138,22 +138,22 @@ static void generateAddCode(Buffer *buffer, Node *node) {
 	}
 }
 
-// Generate bytecode from an AST node.
-static void generateNodeCode(Buffer *buffer, Node *node) {
+// Generate bytecode from a node.
+static void generateNodeBytecode(Buffer *buffer, Node *node) {
 	switch (node->kind) {
-		case NODE_PROGRAM: generateProgramCode(buffer, node); break;
-		case NODE_LOOP: generateLoopCode(buffer, node); break;
-		case NODE_MOVE: generateMoveCode(buffer, node); break;
-		case NODE_ADD: generateAddCode(buffer, node); break;
+		case NODE_PROGRAM: generateProgramNodeBytecode(buffer, node); break;
+		case NODE_LOOP: generateLoopNodeBytecode(buffer, node); break;
+		case NODE_MOVE: generateMoveNodeBytecode(buffer, node); break;
+		case NODE_ADD: generateAddNodeBytecode(buffer, node); break;
 		case NODE_OUTPUT: putU8(buffer, OP_OUT); break;
 		case NODE_INPUT: putU8(buffer, OP_INP); break;
 	}
 }
 
-// Generate bytecode from a program.
-uint8_t *generateCode(Node *program) {
+// Compile bytecode from a program.
+uint8_t *compileProgram(Node *program) {
 	Buffer buffer;
 	initBuffer(&buffer);
-	generateNodeCode(&buffer, program);
+	generateNodeBytecode(&buffer, program);
 	return buffer.bytes;
 }

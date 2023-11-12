@@ -2,7 +2,7 @@
 
 #include "parser.h"
 
-// Parses an AST from a scanner.
+// Parses a program from a scanner.
 typedef struct {
 	// The parser's scanner.
 	Scanner *scanner;

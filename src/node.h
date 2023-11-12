@@ -1,7 +1,7 @@
 #ifndef BRAINIAC_NODE_H
 #define BRAINIAC_NODE_H
 
-// An AST node's kind.
+// A node's kind.
 typedef enum {
 	NODE_PROGRAM, // A program composed of a sequence of commands.
 	NODE_LOOP, // A sequence of commands between a '[' and a ']' command.
@@ -11,31 +11,31 @@ typedef enum {
 	NODE_INPUT, // A ',' command.
 } NodeKind;
 
-// A node of an AST.
+// A node of a program.
 typedef struct Node {
-	// The AST node's kind.
+	// The node's kind.
 	NodeKind kind;
 	
-	// The AST node's value.
+	// The node's value.
 	int value;
 	
-	// The AST node's child count.
+	// The node's child count.
 	int childCount;
 	
-	// The AST node's child capacity.
+	// The node's child capacity.
 	int childCapacity;
 	
-	// The AST node's children.
+	// The node's children.
 	struct Node **children;
 } Node;
 
-// Allocate a new AST node from its kind and value.
+// Allocate a new node from its kind and value.
 Node *newNode(NodeKind kind, int value);
 
-// Append a child AST to node to a parent AST node.
+// Append a child node to a parent node.
 void appendNode(Node *parent, Node *child);
 
-// Free an AST node and its children.
+// Free a node and its children.
 void freeNode(Node *node);
 
 #endif // BRAINIAC_NODE_H
