@@ -59,9 +59,9 @@ Make can be used to build Brainiac in debug mode:
 make debug
 ```
 
-In debug mode the `BRAINIAC_DEBUG` macro is defined, which causes `(PROGRAM)`
-to be printed after successful parsing. The binary is also optimized for use
-with debugging software.
+In debug mode the `BRAINIAC_DEBUG` macro is defined, which causes a program's
+AST to be printed after successful parsing. The binary is also optimized for
+use with debugging software.
 
 Make can also be used to remove the `bin/` directory:
 ```bash
