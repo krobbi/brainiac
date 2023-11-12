@@ -62,11 +62,6 @@ make clean
 This subcommand requires `rm` from
 [Coreutils](https://gnu.org/software/coreutils).
 
-Make can also be used to run `test/mandelbrot.bf` after building:
-```bash
-make test
-```
-
 # Credits and License
 Hello world program at `test/hello.bf` by Khalid Sabry:  
 https://codegolf.stackexchange.com/questions/55422/hello-world/163590#163590

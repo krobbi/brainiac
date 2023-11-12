@@ -1,6 +1,6 @@
 # C compiler:
 CC := gcc
-CFLAGS := -std=c99 -Wall -Wextra -Werror -O2 -flto
+CFLAGS := -std=c99 -Wall -Wextra -Werror
 
 # Directories:
 SRC_DIR := src
@@ -11,7 +11,6 @@ SRCS := $(wildcard $(SRC_DIR)/*.c)
 HDRS := $(wildcard $(SRC_DIR)/*.h)
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BIN_DIR)/%.o)
 EXEC := $(BIN_DIR)/brainiac
-TEST := test/mandelbrot.bf
 
 # Add '.exe' extension to executable on Windows:
 ifeq ($(OS),Windows_NT)
@@ -20,6 +19,7 @@ endif
 
 # Build Brainiac:
 .PHONY: all
+all: CFLAGS += -O2 -flto
 all: $(EXEC)
 
 # Clean binaries directory:
@@ -27,12 +27,6 @@ all: $(EXEC)
 clean:
 	@echo "Cleaning '$(BIN_DIR)'..."
 	@rm -rf -- $(BIN_DIR)
-
-# Test Brainiac:
-.PHONY: test
-test: $(EXEC)
-	@echo "Running '$(TEST)'..."
-	@$(EXEC) $(TEST)
 
 # Make binaries directory:
 $(BIN_DIR):
@@ -45,6 +39,6 @@ $(BIN_DIR)/%.o: $(SRC_DIR)/%.c $(HDRS) | $(BIN_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Link executable from objects:
-$(EXEC): $(OBJS) | $(BIN_DIR)
+$(EXEC): $(OBJS)
 	@echo "Linking '$@'..."
 	@$(CC) $(CFLAGS) $^ -o $@
