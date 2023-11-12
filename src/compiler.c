@@ -1,6 +1,9 @@
 #include <stdlib.h>
 
 #include "compiler.h"
+#ifdef BRAINIAC_DEBUG
+#include "debug.h"
+#endif // BRAINIAC_DEBUG
 #include "generator.h"
 #include "parser.h"
 #include "scanner.h"
@@ -13,7 +16,7 @@ static uint8_t *compileScanner(Scanner *scanner) {
 		return NULL;
 	}
 #ifdef BRAINIAC_DEBUG
-	printf("Debug mode enabled.\n");
+	printProgram(program);
 #endif // BRAINIAC_DEBUG
 	uint8_t *bytecode = compileProgram(program);
 	freeNode(program);
