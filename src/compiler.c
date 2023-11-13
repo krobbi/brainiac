@@ -5,6 +5,7 @@
 #include "debug.h"
 #endif // BRAINIAC_DEBUG
 #include "generator.h"
+#include "optimizer.h"
 #include "parser.h"
 #include "scanner.h"
 
@@ -15,10 +16,14 @@ static uint8_t *compileScanner(Scanner *scanner) {
 	if (program == NULL) {
 		return NULL;
 	}
-	
-	uint8_t *bytecode = compileProgram(program);
 #ifdef BRAINIAC_DEBUG
 	printf("Parsed AST:\n");
+	printProgram(program);
+#endif // BRAINIAC_DEBUG
+	optimizeProgram(program);
+	uint8_t *bytecode = compileProgram(program);
+#ifdef BRAINIAC_DEBUG
+	printf("\nOptimized AST:\n");
 	printProgram(program);
 	printf("\nCompiled bytecode:\n");
 	printBytecode(bytecode);
