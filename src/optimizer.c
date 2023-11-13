@@ -4,11 +4,33 @@
 
 #include "optimizer.h"
 
+// Return whether a node has no effect.
+static bool isNodeNop(Node *node) {
+	switch (node->kind) {
+		case NODE_MOVE: return (int16_t)node->value == 0;
+		case NODE_ADD: return (int8_t)node->value == 0;
+		default: return false;
+	}
+}
+
+// Remove nodes that have no effect.
+static void stepRemoveNop(Node *parent, bool *hasChanges) {
+	for (int i = parent->childCount - 1; i >= 0; i--) {
+		Node *child = parent->children[i];
+		stepRemoveNop(child, hasChanges);
+		
+		if (isNodeNop(child)) {
+			removeNode(parent, i);
+			*hasChanges = true;
+		}
+	}
+}
+
 // Replace loop nodes that set to 0 with set nodes.
-static void stepLoopToSet(Node *parent, bool *hasChanges) {
+static void stepReplaceLoopSet(Node *parent, bool *hasChanges) {
 	for (int i = 0; i < parent->childCount; i++) {
 		Node *loop = parent->children[i];
-		stepLoopToSet(loop, hasChanges);
+		stepReplaceLoopSet(loop, hasChanges);
 		
 		if (loop->kind != NODE_LOOP || loop->childCount != 1) {
 			continue;
@@ -28,7 +50,8 @@ static void stepLoopToSet(Node *parent, bool *hasChanges) {
 // Run an optimization pass and return whether any changes were made.
 static bool runPass(Node *program) {
 	bool hasChanges = false;
-	stepLoopToSet(program, &hasChanges);
+	stepRemoveNop(program, &hasChanges);
+	stepReplaceLoopSet(program, &hasChanges);
 	return hasChanges;
 }
 

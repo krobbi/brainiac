@@ -33,10 +33,13 @@ typedef struct Node {
 // Allocate a new node from its kind and value.
 Node *newNode(NodeKind kind, int value);
 
+// Free a node and its children.
+void freeNode(Node *node);
+
 // Append a child node to a parent node.
 void appendNode(Node *parent, Node *child);
 
-// Free a node and its children.
-void freeNode(Node *node);
+// Remove a child node from a parent node by index.
+void removeNode(Node *parent, int index);
 
 #endif // BRAINIAC_NODE_H

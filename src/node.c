@@ -18,6 +18,16 @@ Node *newNode(NodeKind kind, int value) {
 	return node;
 }
 
+// Free a node and its children.
+void freeNode(Node *node) {
+	for (int i = 0; i < node->childCount; i++) {
+		freeNode(node->children[i]);
+	}
+	
+	free(node->children);
+	free(node);
+}
+
 // Append a child node to a parent node.
 void appendNode(Node *parent, Node *child) {
 	if (parent->childCount == parent->childCapacity) {
@@ -32,12 +42,12 @@ void appendNode(Node *parent, Node *child) {
 	parent->children[parent->childCount++] = child;
 }
 
-// Free a node and its children.
-void freeNode(Node *node) {
-	for (int i = 0; i < node->childCount; i++) {
-		freeNode(node->children[i]);
-	}
+// Remove a child node from a parent node by index.
+void removeNode(Node *parent, int index) {
+	freeNode(parent->children[index]);
+	parent->childCount--;
 	
-	free(node->children);
-	free(node);
+	for (int i = index; i < parent->childCount; i++) {
+		parent->children[i] = parent->children[i + 1];
+	}
 }
