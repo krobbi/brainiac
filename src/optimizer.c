@@ -1,14 +1,34 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "optimizer.h"
 
+// Replace loop nodes that set to 0 with set nodes.
+static void stepLoopToSet(Node *parent, bool *hasChanges) {
+	for (int i = 0; i < parent->childCount; i++) {
+		Node *loop = parent->children[i];
+		stepLoopToSet(loop, hasChanges);
+		
+		if (loop->kind != NODE_LOOP || loop->childCount != 1) {
+			continue;
+		}
+		
+		Node *body = loop->children[0];
+		uint8_t value = (uint8_t)body->value;
+		
+		if ((body->kind == NODE_SET && value == 0) || (body->kind == NODE_ADD && (value & 1))) {
+			freeNode(loop);
+			parent->children[i] = newNode(NODE_SET, 0);
+			*hasChanges = true;
+		}
+	}
+}
+
 // Run an optimization pass and return whether any changes were made.
 static bool runPass(Node *program) {
-	(void)program; // Unused parameter.
-	
 	bool hasChanges = false;
-	// TODO: Implement optimization steps.
+	stepLoopToSet(program, &hasChanges);
 	return hasChanges;
 }
 

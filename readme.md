@@ -1,5 +1,5 @@
 # Brainiac
-_A Brainfuck interpreter written in C._  
+_A heavy-duty optimizing Brainfuck interpreter written in C._  
 __Copyright &copy; 2023 Chris Roberts__ (Krobbizoid).
 
 # Contents
@@ -10,16 +10,16 @@ __Copyright &copy; 2023 Chris Roberts__ (Krobbizoid).
 
 # About
 Brainiac is a [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) interpreter
-written in C. This is mostly a refresher for C and low level concepts.
+written in C. It was initially written as a refresher for C and low-ish level
+concepts, but soon grew into a more sophisticated implementation.
 
-I chose Brainfuck because it is simple, but not trivial. It can produce some
-interesting output, and leaves some room for expansion and optimization.
-Interpreting rather than compiling is simpler and safer, and gives me a VM to
-try out a computed goto dispatch table with.
-
-Brainfuck implementations have already been created many times before. Many of
-which are probably faster than Brainiac due to some clever
-[optimizations](https://www.nayuki.io/page/optimizing-brainfuck-compiler).
+Brainiac aims to implement some
+[optimizations](https://nayuki.io/page/optimizing-brainfuck-compiler) by
+parsing and optimizing an
+[abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and
+generating executable bytecode. This approach closely mirrors a typical
+compiler, but interpreting the source code directly is also feasible for such a
+simple language.
 
 # Usage
 Run Brainiac from the command line with a path to a Brainfuck source file to
@@ -41,7 +41,7 @@ Any input starting with `exit` will exit the REPL. Entering `Ctrl+D` or
 `Ctrl+Z` on Windows can also be used to exit.
 
 Pressing `Ctrl+C` will exit the program in interpreter mode or REPL mode. This
-is useful if a Brainfuck script enters an infinite loop.
+is useful if a program enters an infinite loop.
 
 # Building
 Brainiac is built using [GCC](https://gnu.org/software/gcc) and
