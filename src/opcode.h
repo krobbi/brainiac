@@ -28,6 +28,10 @@ typedef enum {
 	
 	OP_BNZ_U8, // Branch backward by U8 operand if pointed memory is non-zero.
 	OP_BNZ_U16, // Branch backward by U16 operand if pointed memory is non-zero.
+	
+	OP_SET_0, // Set pointed memory to 0.
+	OP_SET_1, // Set pointed memory to 1.
+	OP_SET_U8, // Set pointed memory to U8 operand.
 } Opcode;
 
 #endif // BRAINIAC_OPCODE_H

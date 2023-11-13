@@ -169,6 +169,9 @@ void printBytecode(uint8_t *bytecode) {
 			case OP_BRZ_U16: printJumpOp("BRZ_U16", bytecode, &offset, 16, 1); break;
 			case OP_BNZ_U8: printJumpOp("BNZ_U8", bytecode, &offset, 8, -1); break;
 			case OP_BNZ_U16: printJumpOp("BNZ_U16", bytecode, &offset, 16, -1); break;
+			case OP_SET_0: printBasicOp("SET_0"); break;
+			case OP_SET_1: printBasicOp("SET_1"); break;
+			case OP_SET_U8: printU8Op("SET_U8", bytecode, &offset); break;
 		}
 	} while (opcode != OP_HLT);
 }

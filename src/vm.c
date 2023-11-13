@@ -25,7 +25,10 @@ void interpretBytecode(uint8_t *bytecode) {
 	vm_OP_BRZ_U8,
 	vm_OP_BRZ_U16,
 	vm_OP_BNZ_U8,
-	vm_OP_BNZ_U16;
+	vm_OP_BNZ_U16,
+	vm_OP_SET_0,
+	vm_OP_SET_1,
+	vm_OP_SET_U8;
 	
 	static void *dispatchTable[] = {
 		[OP_HLT] = &&vm_OP_HLT,
@@ -45,6 +48,9 @@ void interpretBytecode(uint8_t *bytecode) {
 		[OP_BRZ_U16] = &&vm_OP_BRZ_U16,
 		[OP_BNZ_U8] = &&vm_OP_BNZ_U8,
 		[OP_BNZ_U16] = &&vm_OP_BNZ_U16,
+		[OP_SET_0] = &&vm_OP_SET_0,
+		[OP_SET_1] = &&vm_OP_SET_1,
+		[OP_SET_U8] = &&vm_OP_SET_U8,
 	};
 #define VM_OP(opcode) vm_##opcode:
 #define VM_DISPATCH() goto *dispatchTable[VM_U8()]
@@ -160,6 +166,21 @@ void interpretBytecode(uint8_t *bytecode) {
 				bytecode -= offset;
 			}
 			
+			VM_DISPATCH();
+		}
+		
+		VM_OP(OP_SET_0) {
+			memory[pointer] = 0;
+			VM_DISPATCH();
+		}
+		
+		VM_OP(OP_SET_1) {
+			memory[pointer] = 1;
+			VM_DISPATCH();
+		}
+		
+		VM_OP(OP_SET_U8) {
+			memory[pointer] = VM_U8();
 			VM_DISPATCH();
 		}
 	}
