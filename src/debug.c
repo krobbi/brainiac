@@ -52,6 +52,7 @@ static const char *getNodeKindName(NodeKind kind) {
 		case NODE_ADD: return "ADD";
 		case NODE_OUTPUT: return "OUTPUT";
 		case NODE_INPUT: return "INPUT";
+		case NODE_SET: return "SET";
 	}
 	
 	return "UNKNOWN";
@@ -62,6 +63,7 @@ static bool nodeKindHasValue(NodeKind kind) {
 	switch (kind) {
 		case NODE_MOVE:
 		case NODE_ADD:
+		case NODE_SET:
 			return true;
 		default:
 			return false;

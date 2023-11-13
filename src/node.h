@@ -9,6 +9,7 @@ typedef enum {
 	NODE_ADD, // A sequence of '+' and '-' commands.
 	NODE_OUTPUT, // A '.' command.
 	NODE_INPUT, // A ',' command.
+	NODE_SET, // Set pointed memory.
 } NodeKind;
 
 // A node of a program.

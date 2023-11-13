@@ -138,6 +138,20 @@ static void generateAddNodeBytecode(Buffer *buffer, Node *node) {
 	}
 }
 
+// Generate bytecode from a set node.
+static void generateSetNodeBytecode(Buffer *buffer, Node *node) {
+	uint8_t value = (uint8_t)node->value;
+	
+	if (value == 0) {
+		putU8(buffer, OP_SET_0);
+	} else if (value == 1) {
+		putU8(buffer, OP_SET_1);
+	} else {
+		putU8(buffer, OP_SET_U8);
+		putU8(buffer, value);
+	}
+}
+
 // Generate bytecode from a node.
 static void generateNodeBytecode(Buffer *buffer, Node *node) {
 	switch (node->kind) {
@@ -147,6 +161,7 @@ static void generateNodeBytecode(Buffer *buffer, Node *node) {
 		case NODE_ADD: generateAddNodeBytecode(buffer, node); break;
 		case NODE_OUTPUT: putU8(buffer, OP_OUT); break;
 		case NODE_INPUT: putU8(buffer, OP_INP); break;
+		case NODE_SET: generateSetNodeBytecode(buffer, node); break;
 	}
 }
 
