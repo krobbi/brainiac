@@ -13,6 +13,38 @@ static bool isNodeNop(Node *node) {
 	}
 }
 
+// Merge a pair of nodes to a new single node.
+static Node *mergeNodes(Node *first, Node *second) {
+	switch (second->kind) {
+		case NODE_LOOP:
+			if (first->kind == NODE_SET && (uint8_t)first->value == 0) {
+				return newNode(NODE_SET, 0);
+			} else {
+				return NULL;
+			}
+		case NODE_MOVE:
+			if (first->kind == NODE_MOVE) {
+				return newNode(NODE_MOVE, first->value + second->value);
+			} else {
+				return NULL;
+			}
+		case NODE_ADD:
+			if (first->kind == NODE_ADD || first->kind == NODE_SET) {
+				return newNode(first->kind, first->value + second->value);
+			} else {
+				return NULL;
+			}
+		case NODE_SET:
+			if (first->kind == NODE_ADD || first->kind == NODE_SET) {
+				return newNode(NODE_SET, second->value);
+			} else {
+				return NULL;
+			}
+		default:
+			return NULL;
+	}
+}
+
 // Remove nodes that have no effect.
 static void stepRemoveNop(Node *parent, bool *hasChanges) {
 	for (int i = parent->childCount - 1; i >= 0; i--) {
@@ -21,6 +53,25 @@ static void stepRemoveNop(Node *parent, bool *hasChanges) {
 		
 		if (isNodeNop(child)) {
 			removeNode(parent, i);
+			*hasChanges = true;
+		}
+	}
+}
+
+// Merge pairs of nodes that can be represented as a single node.
+static void stepMergeNodes(Node *parent, bool *hasChanges) {
+	if (parent->childCount > 0) {
+		stepMergeNodes(parent->children[parent->childCount - 1], hasChanges);
+	}
+	
+	for (int i = parent->childCount - 2; i >= 0; i--) {
+		stepMergeNodes(parent->children[i], hasChanges);
+		Node *merged = mergeNodes(parent->children[i], parent->children[i + 1]);
+		
+		if (merged != NULL) {
+			removeNode(parent, i);
+			freeNode(parent->children[i]);
+			parent->children[i] = merged;
 			*hasChanges = true;
 		}
 	}
@@ -39,7 +90,7 @@ static void stepReplaceLoopSet(Node *parent, bool *hasChanges) {
 		Node *body = loop->children[0];
 		uint8_t value = (uint8_t)body->value;
 		
-		if ((body->kind == NODE_SET && value == 0) || (body->kind == NODE_ADD && (value & 1))) {
+		if ((body->kind == NODE_ADD && (value & 1)) || (body->kind == NODE_SET && value == 0)) {
 			freeNode(loop);
 			parent->children[i] = newNode(NODE_SET, 0);
 			*hasChanges = true;
@@ -51,6 +102,7 @@ static void stepReplaceLoopSet(Node *parent, bool *hasChanges) {
 static bool runPass(Node *program) {
 	bool hasChanges = false;
 	stepRemoveNop(program, &hasChanges);
+	stepMergeNodes(program, &hasChanges);
 	stepReplaceLoopSet(program, &hasChanges);
 	return hasChanges;
 }
