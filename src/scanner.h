@@ -23,6 +23,18 @@ typedef struct {
 	
 	// The scanner's next character.
 	const char *next;
+	
+	// The scanner's current line number.
+	int line;
+	
+	// The scanner's current column number.
+	int column;
+	
+	// The scanner's next line number.
+	int nextLine;
+	
+	// The scanner's next column number.
+	int nextColumn;
 } Scanner;
 
 // Initialize a scanner from a file.

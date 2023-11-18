@@ -9,17 +9,27 @@ typedef struct {
 	
 	// The parser's next token.
 	Token next;
+	
+	// The parser's current line number.
+	int line;
+	
+	// The parser's current column number.
+	int column;
 } Parser;
 
 // Initialize a parser.
 static void initParser(Parser *parser, Scanner *scanner) {
 	parser->scanner = scanner;
 	parser->next = scanToken(scanner);
+	parser->line = 1;
+	parser->column = 1;
 }
 
 // Advance to the next token.
 static Token advance(Parser *parser) {
 	Token current = parser->next;
+	parser->line = parser->scanner->line;
+	parser->column = parser->scanner->column;
 	parser->next = scanToken(parser->scanner);
 	return current;
 }
@@ -37,6 +47,16 @@ static bool accept(Parser *parser, Token kind) {
 	} else {
 		return false;
 	}
+}
+
+// Log an error message at a line and column number.
+static void logErrorAt(int line, int column, const char *message) {
+	fprintf(stderr, "[%d:%d] %s\n", line, column, message);
+}
+
+// Log an error message at the current line and column number.
+static void logError(Parser *parser, const char *message) {
+	logErrorAt(parser->line, parser->column, message);
 }
 
 // Parse a sequence.
@@ -59,6 +79,8 @@ static Node *parseCommand(Parser *parser);
 
 // Parse a loop.
 static Node *parseLoop(Parser *parser) {
+	int line = parser->line;
+	int column = parser->column;
 	bool hasError = false;
 	Node *loop = newNode(NODE_LOOP, 0);
 	
@@ -74,7 +96,7 @@ static Node *parseLoop(Parser *parser) {
 	}
 	
 	if (!accept(parser, TOKEN_RBRACKET)) {
-		fprintf(stderr, "Cannot use '[' without a matching closing ']'.\n");
+		logErrorAt(line, column, "Cannot use '[' without a matching closing ']'.");
 		hasError = true;
 	}
 	
@@ -90,7 +112,7 @@ static Node *parseLoop(Parser *parser) {
 static Node *parseCommand(Parser *parser) {
 	switch (advance(parser)) {
 		case TOKEN_EOF:
-			fprintf(stderr, "Encountered end of file while parsing command.\n");
+			logError(parser, "Encountered end of file while parsing command.");
 			break;
 		case TOKEN_GREATER:
 			return parseSequence(parser, NODE_MOVE, TOKEN_LESS, TOKEN_GREATER, 1);
@@ -107,7 +129,7 @@ static Node *parseCommand(Parser *parser) {
 		case TOKEN_LBRACKET:
 			return parseLoop(parser);
 		case TOKEN_RBRACKET:
-			fprintf(stderr, "Cannot use ']' without a matching opening '['.\n");
+			logError(parser, "Cannot use ']' without a matching opening '['.");
 			break;
 	}
 	
