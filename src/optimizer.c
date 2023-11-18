@@ -58,6 +58,14 @@ static void stepRemoveNop(Node *parent, bool *hasChanges) {
 	}
 }
 
+// Replace add nodes at the start of a program with set nodes.
+static void stepReplaceHeadAddSet(Node *parent, bool *hasChanges) {
+	if (parent->childCount > 0 && parent->children[0]->kind == NODE_ADD) {
+		parent->children[0]->kind = NODE_SET;
+		*hasChanges = true;
+	}
+}
+
 // Merge pairs of nodes that can be represented as a single node.
 static void stepMergeNodes(Node *parent, bool *hasChanges) {
 	if (parent->childCount > 0) {
@@ -102,6 +110,7 @@ static void stepReplaceLoopSet(Node *parent, bool *hasChanges) {
 static bool runPass(Node *program) {
 	bool hasChanges = false;
 	stepRemoveNop(program, &hasChanges);
+	stepReplaceHeadAddSet(program, &hasChanges);
 	stepMergeNodes(program, &hasChanges);
 	stepReplaceLoopSet(program, &hasChanges);
 	return hasChanges;
