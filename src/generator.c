@@ -170,5 +170,14 @@ uint8_t *compileProgram(Node *program) {
 	Buffer buffer;
 	initBuffer(&buffer);
 	generateNodeBytecode(&buffer, program);
+	
+	if (buffer.capacity > buffer.count) {
+		buffer.bytes = (uint8_t*)realloc(buffer.bytes, buffer.count * sizeof(uint8_t));
+		
+		if (buffer.bytes == NULL) {
+			exit(EXIT_FAILURE);
+		}
+	}
+	
 	return buffer.bytes;
 }
