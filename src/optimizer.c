@@ -13,6 +13,21 @@ static bool isNodeNop(Node *node) {
 	}
 }
 
+// Return whether a node has no effect at the start of a program.
+static bool isNodeHeadNop(Node *node) {
+	switch (node->kind) {
+		case NODE_LOOP:
+		case NODE_MOVE:
+			return true;
+		case NODE_ADD:
+			return (int8_t)node->value == 0;
+		case NODE_SET:
+			return (uint8_t)node->value == 0;
+		default:
+			return false;
+	}
+}
+
 // Merge a pair of nodes to a new single node.
 static Node *mergeNodes(Node *first, Node *second) {
 	switch (second->kind) {
@@ -55,6 +70,14 @@ static void stepRemoveNop(Node *parent, bool *hasChanges) {
 			removeNode(parent, i);
 			*hasChanges = true;
 		}
+	}
+}
+
+// Remove nodes that have no effect at the start of a program.
+static void stepRemoveHeadNop(Node *parent, bool *hasChanges) {
+	while (parent->childCount > 0 && isNodeHeadNop(parent->children[0])) {
+		removeNode(parent, 0);
+		*hasChanges = true;
 	}
 }
 
@@ -110,6 +133,7 @@ static void stepReplaceLoopSet(Node *parent, bool *hasChanges) {
 static bool runPass(Node *program) {
 	bool hasChanges = false;
 	stepRemoveNop(program, &hasChanges);
+	stepRemoveHeadNop(program, &hasChanges);
 	stepReplaceHeadAddSet(program, &hasChanges);
 	stepMergeNodes(program, &hasChanges);
 	stepReplaceLoopSet(program, &hasChanges);
