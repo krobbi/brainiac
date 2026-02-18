@@ -1,6 +1,5 @@
 # Brainiac
-_A heavy-duty optimizing Brainfuck interpreter written in C._  
-__Copyright &copy; 2023 Chris Roberts__ (Krobbizoid).
+_A heavy-duty optimizing Brainfuck interpreter written in C._
 
 # Contents
 1. [About](#about)
@@ -78,7 +77,5 @@ https://codegolf.stackexchange.com/questions/55422/hello-world/163590#163590
 Mandelbrot set fractal viewer at `test/mandelbrot.bf` by Erik Bosman:  
 https://esoteric.sange.fi/brainfuck/utils/mandelbrot
 
-Brainiac is released under the MIT License:  
-https://krobbi.github.io/license/2023/mit.txt
-
-See [license.txt](./license.txt) for a full copy of the license text.
+Brainiac is released under the MIT License. See [license.txt](license.txt) for
+a full copy of the license text.
