@@ -1,9 +1,12 @@
+# Ignore:
+ignore/
+
 # Binaries:
-bin/*
+bin/
 
 # IDE:
-.idea/*
-.vscode/*
+.idea/
+.vscode/
 *.code-workspace
 *.sublime-project
 *.sublime-workspace
