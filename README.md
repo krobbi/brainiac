@@ -3,9 +3,6 @@ Brainiac is an optimizing [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck)
 interpreter written in C. It was initially written as a refresher for C and
 low-ish level concepts, but soon grew into a more sophisticated implementation.
 
-See the [`rust` branch](https://github.com/krobbi/brainiac/tree/rust) for a
-newer implementation written in Rust.
-
 Brainiac aims to implement some
 [optimizations](https://nayuki.io/page/optimizing-brainfuck-compiler) by
 parsing and optimizing an
